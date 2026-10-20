@@ -397,16 +397,28 @@ export default class Turn {
         if (this.josephDeck.cards[0]) {
             this.josephDeck.cards[0].render(ctx, language, currentTurn)
         }
-        ctx.fillStyle = "rgb(242, 211, 6)"
+        ctx.save()
         ctx.font = "24px LongaIberica-DEMO"
-
+        ctx.lineJoin = "round"
+        ctx.lineWidth = 3
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.85)"
+        ctx.strokeText(this.name, xPos, yPos);
+        ctx.fillStyle = "white"
         ctx.fillText(this.name ,xPos, yPos);
+        ctx.restore()
         if (this.active) {
-            ctx.font = "80px LongaIberica-DEMO"
-            ctx.fillStyle = "#FF8c00"
             const actionsLeft = this.maxActions-this.actionsCounter
-            ctx.fillText(actionsLeft, IconsPos.ACTIONS_LEFT_X, IconsPos.ACTIONS_LEFT_Y)
+            ctx.save()
+            ctx.font = "64px LongaIberica-DEMO"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+            ctx.lineJoin = "round"
+            ctx.lineWidth = 5
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.85)"
             ctx.strokeText(actionsLeft, IconsPos.ACTIONS_LEFT_X, IconsPos.ACTIONS_LEFT_Y);
+            ctx.fillStyle = "white"
+            ctx.fillText(actionsLeft, IconsPos.ACTIONS_LEFT_X, IconsPos.ACTIONS_LEFT_Y)
+            ctx.restore()
             
         }
         

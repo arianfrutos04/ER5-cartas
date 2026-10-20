@@ -1,5 +1,15 @@
 import { SlotsState } from "./constants.js";
 
+// Color del brillo de un Slot segun el color de su estado
+const SLOT_GLOW_COLORS = {
+    white:  [255, 236, 190],
+    yellow: [255, 196, 64],
+    green:  [96, 214, 120],
+    red:    [235, 64, 52],
+    orange: [255, 140, 40],
+    blue:   [90, 170, 255],
+};
+
 export default class Slot{
 
     constructor(xPos, yPos, xSize, ySize){
@@ -81,14 +91,72 @@ export default class Slot{
         const slotsYPos = this.yPos;
         const slotsXSize = this.xSize;
         const slotsYSize = this.ySize;
-            
-        ctx.globalAlpha = 0.5;
-        ctx.fillStyle = this.color;
 
-        ctx.fillRect(slotsXPos, slotsYPos, slotsXSize, slotsYSize);
+        // Los Slots de eventos son los unicos de menos de 100 px de ancho
+        const isEventSlot = slotsXSize < 100;
+        const glowColor = SLOT_GLOW_COLORS[this.color];
 
-        ctx.globalAlpha = 1;
+        ctx.save();
+
+        if (glowColor === undefined){
+
+            const inset = isEventSlot ? 0 : 2;
+
+            ctx.globalAlpha = 0.5;
+            ctx.fillStyle = "black";
+            Slot.roundedPath(ctx, slotsXPos + inset, slotsYPos + inset, slotsXSize - inset * 2, slotsYSize - inset * 2, isEventSlot ? 11 : 16);
+            ctx.fill();
+        }
+
+        else{
+
+            const [red, green, blue] = glowColor;
+            const radius = isEventSlot ? 11 : 13;
+            const inset = isEventSlot ? 3 : 4;
+            const xPos = slotsXPos + inset;
+            const yPos = slotsYPos + inset;
+            const width = slotsXSize - inset * 2;
+            const height = slotsYSize - inset * 2;
+            const xCenter = slotsXPos + slotsXSize / 2;
+            const yCenter = slotsYPos + slotsYSize / 2;
+
+            // El brillo nace del borde hacia dentro, sin salirse del Slot
+            Slot.roundedPath(ctx, xPos, yPos, width, height, radius);
+            ctx.clip();
+
+            const gradient = ctx.createRadialGradient(xCenter, yCenter, Math.min(slotsXSize, slotsYSize) * 0.15, xCenter, yCenter, Math.max(slotsXSize, slotsYSize) * 0.62);
+            gradient.addColorStop(0, `rgba(${red}, ${green}, ${blue}, 0.06)`);
+            gradient.addColorStop(1, `rgba(${red}, ${green}, ${blue}, 0.30)`);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(xPos, yPos, width, height);
+
+            ctx.shadowColor = `rgba(${red}, ${green}, ${blue}, 0.85)`;
+            ctx.shadowBlur = 12;
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = `rgba(${red}, ${green}, ${blue}, 0.55)`;
+            Slot.roundedPath(ctx, xPos, yPos, width, height, radius);
+            ctx.stroke();
+
+            ctx.shadowBlur = 0;
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = `rgba(${red}, ${green}, ${blue}, 0.9)`;
+            Slot.roundedPath(ctx, xPos + 0.75, yPos + 0.75, width - 1.5, height - 1.5, radius - 0.75);
+            ctx.stroke();
+        }
+
+        ctx.restore();
         ctx.fillStyle = "black";
+    }
+
+    static roundedPath(ctx, xPos, yPos, width, height, radius){
+
+        ctx.beginPath();
+        ctx.moveTo(xPos + radius, yPos);
+        ctx.arcTo(xPos + width, yPos, xPos + width, yPos + height, radius);
+        ctx.arcTo(xPos + width, yPos + height, xPos, yPos + height, radius);
+        ctx.arcTo(xPos, yPos + height, xPos, yPos, radius);
+        ctx.arcTo(xPos, yPos, xPos + width, yPos, radius);
+        ctx.closePath();
     }
     
     isSlotSelected(grid){

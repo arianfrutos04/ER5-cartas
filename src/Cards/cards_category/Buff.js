@@ -1,5 +1,6 @@
 import { BorderId, BuffId, CardActions, CardId, DecksId, DurabilityColors, IconsPos, MainCharacterId, MessageState, MessageType, ScreenSize, TurnStates, TypeNames, VFXId } from "../../constants.js";
 import Card from "../Card.js";
+import { drawEventSlotImage, eventFade, eventReadyGlow, eventSelectGlow } from "../eventSlotStyle.js";
 import EventContainer from "../../Events/EventContainer.js";
 import Messages from "../../Messages.js";
 
@@ -235,7 +236,7 @@ export default class Buff extends Card {
                 yPos = 140
                 size = CardId.BIG_SIZE
                 
-            }else if(this.state === CardId.SELECTED){
+            }else if(this.state === CardId.SELECTED && !this.isInEventSlot(size)){
                 if (this.deck.deckId=== DecksId.PLAYER_1_HAND_DECK || this.deck.deckId === DecksId.PLAYER_2_HAND_DECK) {
                     yPos-=100 
                 }
@@ -244,7 +245,7 @@ export default class Buff extends Card {
                     cardVFX,                 //Img File
                     IconsPos.VFX_X[size] + xPos,IconsPos.VFX_Y[size] + yPos                    //X & Y Position Source
                     )
-            }else if(this.state === CardId.HOVER){
+            }else if(this.state === CardId.HOVER && !this.isInEventSlot(size)){
                 if (this.deck.deckId=== DecksId.PLAYER_1_HAND_DECK || this.deck.deckId === DecksId.PLAYER_2_HAND_DECK) {
                     yPos-=100 
                 }
@@ -255,21 +256,17 @@ export default class Buff extends Card {
                     )
             }
             if (this.deck.deckId === DecksId.PLAYER_1_PREPARING_EVENT_DECK || this.deck.deckId === DecksId.PLAYER_2_PREPARING_EVENT_DECK) {
-                let xTemp = xPos
-                let yTemp = yPos
                 if (this.state != CardId.SCALED) {
-                    ctx.setTransform(0.366, 0, 0, 0.38, 0, 0);
-                    xTemp = xPos * 2.734
-                    yTemp = yPos * 2.638
                     size = CardId.EVENT_SIZE
+                    drawEventSlotImage(ctx, this.image[CardId.BIG_SIZE], xPos, yPos)
+
+                    if (this.state === CardId.SELECTED || this.state === CardId.HOVER) {
+                        eventSelectGlow(ctx, xPos, yPos, this.state === CardId.SELECTED)
+                    }
                 }
-                    ctx.drawImage(
-                        this.image[CardId.BIG_SIZE],                 //Img File
-                        xTemp, yTemp                    //X & Y Position Source
-                        )
-                        
-                if (this.state != CardId.SCALED)
-                    ctx.setTransform(1, 0, 0, 1, 0, 0);    
+                else {
+                    ctx.drawImage(this.image[CardId.BIG_SIZE], xPos + IconsPos.IMAGE_X[size], yPos + IconsPos.IMAGE_Y[size])
+                }
                     
                 
             }else{
@@ -338,8 +335,7 @@ export default class Buff extends Card {
                     
                     if(this.cooldown >= 0.1){
 
-                        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-                        ctx.fillRect(xPos, yPos, IconsPos.EVENT_FADE_WIDTH, IconsPos.EVENT_FADE_HEIGTH);
+                        eventFade(ctx, xPos, yPos);
                         
 
                         let color = "white"
@@ -354,30 +350,10 @@ export default class Buff extends Card {
                     }
                     else{
     
-                        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-                        ctx.fillRect(xPos, yPos, IconsPos.EVENT_FADE_WIDTH, IconsPos.EVENT_FADE_HEIGTH);
+                        eventFade(ctx, xPos, yPos);
                         
 
-                        // Dibujar los bordes del cuadrado
-                        const borderWidth = 5; // Grosor de los bordes
-                        ctx.strokeStyle = DurabilityColors.BUFF; // Color de los bordes
-                        ctx.lineWidth = borderWidth; // Grosor de la línea
-
-                        // Dibujar los bordes izquierdo y superior
-                        ctx.beginPath();
-                        ctx.moveTo(xPos, yPos);
-                        ctx.lineTo(xPos, yPos + IconsPos.EVENT_FADE_HEIGTH);
-                        ctx.lineTo(xPos + IconsPos.EVENT_FADE_WIDTH, yPos + IconsPos.EVENT_FADE_HEIGTH);
-                        ctx.stroke();
-
-                        ctx.beginPath();
-                        ctx.moveTo(xPos, yPos);
-                        ctx.lineTo(xPos + IconsPos.EVENT_FADE_WIDTH, yPos);
-                        ctx.lineTo(xPos + IconsPos.EVENT_FADE_WIDTH, yPos + IconsPos.EVENT_FADE_HEIGTH);
-                        ctx.stroke();
-
-                        ctx.lineWidth = 1;
-                        ctx.strokeStyle = "black";
+                        eventReadyGlow(ctx, xPos, yPos, DurabilityColors.BUFF);
 
                         let color = "white"
                         ctx.fillStyle = color

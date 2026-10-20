@@ -114,7 +114,7 @@ export default class Joseph extends Card{
         switch (this.action) {
             case CardActions.READY:
                 this.xPos = 1750
-                this.yPos = 50
+                this.yPos = 44
                 this.size = CardId.SMALL_SIZE
                 this.eventContainer.createJosephEvents(this.deckObjetives, this, mouse)
                 this.action = CardActions.ON_USE
