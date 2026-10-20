@@ -54,7 +54,7 @@ export default class Game {
         const eventContainer = new EventContainer()
         deckContainer.createDecks(data, cardImgs, language);
 
-        const buttonContainer = ButtonContainer.create(ctx, assets.images[ImageTypes.BUTTON][0]);
+        const buttonContainer = ButtonContainer.create(ctx, assets.images[ImageTypes.BUTTON][0], assets.images[ImageTypes.BUTTON_ICONS]);
         const soundManager = SoundManager.create()
         soundManager.loadSounds()
         const turns = new TurnContainer(board, deckContainer, buttonContainer, eventContainer);
@@ -257,8 +257,13 @@ export default class Game {
 
     renderGameOver(){
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        const gameScreen = document.getElementById("gameScreen");
-        gameScreen.style.background = "url(../media/images/background/tablonAnunciosOver.png) no-repeat bottom";
+
+        // El fondo cubre el canvas apoyado en su borde inferior
+        const background = this.images.images[ImageTypes.BOARD_IMAGE][BoardId.GAME_OVER];
+        const backgroundScale = Math.max(this.canvas.width / background.width, this.canvas.height / background.height);
+        const backgroundWidth = background.width * backgroundScale;
+        const backgroundHeight = background.height * backgroundScale;
+        this.ctx.drawImage(background, (this.canvas.width - backgroundWidth) / 2, this.canvas.height - backgroundHeight, backgroundWidth, backgroundHeight);
 
         const border  = this.images.images[ImageTypes.CARD_BORDER][BorderId.SMALL_SIZE]
 
@@ -465,54 +470,28 @@ export default class Game {
 
                 if (decks.cards[k]){
 
-                    let speedX = 900;
-                    let speedY = 1000;
-
-                    if (decks.cards[k].xPos > grids.slots[i][j].xPos){
-
-                        if (Math.abs(decks.cards[k].xPos - grids.slots[i][j].xPos) <= 20){
-
-                            speedX = 50;
-                        }
-
-                        decks.cards[k].xPos -= speedX * globals.deltaTime;
-                    }
-
-                    if (decks.cards[k].xPos < grids.slots[i][j].xPos){
-
-                        if (Math.abs(decks.cards[k].xPos - grids.slots[i][j].xPos) <= 20){
-
-                            speedX = 50;
-                        }
-
-                        decks.cards[k].xPos += speedX * globals.deltaTime;
-                    }
-
-                    if (decks.cards[k].yPos > grids.slots[i][j].yPos){
-
-                        if (Math.abs(decks.cards[k].yPos - grids.slots[i][j].yPos) <= 20){
-
-                            speedY = 50;
-                        }
-
-                        decks.cards[k].yPos -= speedY * globals.deltaTime;
-                    }
-
-                    if (decks.cards[k].yPos < grids.slots[i][j].yPos){
-
-                        if (Math.abs(decks.cards[k].yPos - grids.slots[i][j].yPos) <= 20){
-
-                            speedY = 50;
-                        }
-
-                        decks.cards[k].yPos += speedY * globals.deltaTime;
-                    }
+                    decks.cards[k].xPos = this.moveTowards(decks.cards[k].xPos, grids.slots[i][j].xPos, 900);
+                    decks.cards[k].yPos = this.moveTowards(decks.cards[k].yPos, grids.slots[i][j].yPos, 1000);
 
                     grids.slots[i][j].isEmpty = false;
                     k++
                 }
             }
         }
+    }
+
+    // Avanza hacia la posicion destino, mas despacio en los ultimos 20 px, y se detiene justo en ella
+    moveTowards(position, target, speed) {
+
+        const distance = target - position;
+        const step = (Math.abs(distance) <= 20 ? 50 : speed) * globals.deltaTime;
+
+        if (Math.abs(distance) <= step){
+
+            return target;
+        }
+
+        return position + Math.sign(distance) * step;
     }
 
     // funcion para realizar el movimiento

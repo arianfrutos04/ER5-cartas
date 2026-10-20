@@ -26,11 +26,12 @@ export default class Board{
         // Atributos de los Grids de Eventos
         const eventRows = 3;
         const eventColumns = 3;
-        const eventSlotXSize = 90;
-        const eventSlotYSize = 94;
-        const eventBoardXPos = canvas.width - eventRows * eventSlotXSize-18;
-        const eventBoardAtackerYPos = canvas.height / 2-2;
-        const eventBoardDefenderYPos = canvas.height / 2 - eventColumns * eventSlotYSize-19  ;
+        const eventSlotXSize = 92.667;
+        const eventSlotYSize = 92.833;
+        const eventSlotsGap = 4;
+        const eventBoardXPos = 1617;
+        const eventBoardAtackerYPos = 530.5;
+        const eventBoardDefenderYPos = 240;
 
         // Atributos de los Grids de Hand
         const handRows = 5;
@@ -45,10 +46,10 @@ export default class Board{
         const board = Grid.initGrids(boardXPos, boardYPos, boardRows, boardColumns, GridId.BOARD_GRID, boardSlotXSize, boardSlotYSize);
 
         // Crear Grid de Eventos Atacante
-        const eventBoardAtacker = Grid.initGrids(eventBoardXPos, eventBoardAtackerYPos, eventRows, eventColumns, GridId.PLAYER_1_EVENT_GRID, eventSlotXSize, eventSlotYSize);
+        const eventBoardAtacker = Grid.initGrids(eventBoardXPos, eventBoardAtackerYPos, eventRows, eventColumns, GridId.PLAYER_1_EVENT_GRID, eventSlotXSize, eventSlotYSize, eventSlotsGap, eventSlotsGap);
         
         // Crear Grid de Board Defensor
-        const eventBoardDefender = Grid.initGrids(eventBoardXPos, eventBoardDefenderYPos, eventRows, eventColumns, GridId.PLAYER_2_EVENT_GRID, eventSlotXSize, eventSlotYSize);
+        const eventBoardDefender = Grid.initGrids(eventBoardXPos, eventBoardDefenderYPos, eventRows, eventColumns, GridId.PLAYER_2_EVENT_GRID, eventSlotXSize, eventSlotYSize, eventSlotsGap, eventSlotsGap);
 
         // Crear Grid de Hand Atacante
         const handAtacker = Grid.initGrids(handXPos, handAtackerYpos, handRows, handColumns, GridId.PLAYER_1_HAND_GRID, handSlotXSize, handSlotYSize);
@@ -95,9 +96,12 @@ export default class Board{
                 image = undefined
             }
             if (image!= undefined) {
-                xPos = 25;
-                yPos = canvas.height / 2 - image.height / 2;
-                ctx.drawImage(image, xPos, yPos) 
+                const eventDeckScale = 0.82;
+                const eventDeckWidth = image.width * eventDeckScale;
+                const eventDeckHeight = image.height * eventDeckScale;
+                xPos = 149 - eventDeckWidth / 2;
+                yPos = canvas.height / 2 - eventDeckHeight / 2;
+                ctx.drawImage(image, xPos, yPos, eventDeckWidth, eventDeckHeight)
             }
 
          const deck = currentTurn === TurnId.PLAYER_1 ? deckContainer.decks[DecksId.PLAYER_2_MINION_DECK].cards : 
@@ -117,9 +121,7 @@ export default class Board{
                 image = undefined
             }
             if (image!= undefined) {
-                xPos = 75;
-                yPos = 12;
-                ctx.drawImage(image, xPos, yPos)
+                this.renderMinionDeck(ctx, image, images[ImageTypes.BOARD_IMAGE][BoardId.DECK_FRAME_TOP], 5, 112)
             }
 
             const enemyDeck = currentTurn === TurnId.PLAYER_1 ? deckContainer.decks[DecksId.PLAYER_1_MINION_DECK].cards : 
@@ -139,14 +141,12 @@ export default class Board{
                 image = undefined
             }
             if (image!= undefined) {
-                xPos = 75;
-                yPos = 872;
-                ctx.drawImage(image, xPos, yPos)
+                this.renderMinionDeck(ctx, image, images[ImageTypes.BOARD_IMAGE][BoardId.DECK_FRAME_BOTTOM], 845, 953)
             }
 
         image = images[ImageTypes.BOARD_IMAGE][BoardId.GEM];
-        xPos = 295;
-        yPos = 55;
+        xPos = 265;
+        yPos = 40;
 
         ctx.drawImage(
             image, xPos, yPos
@@ -161,11 +161,10 @@ export default class Board{
                 hp += card.health
             }
         }
-        ctx.fillText(hp, image.width / 2 + xPos, image.height / 2 + yPos);
-        ctx.strokeText(hp, image.width / 2 + xPos, image.height / 2 + yPos);
+        this.renderGemHealth(ctx, hp, image.width / 2 + xPos, image.height / 2 + yPos);
         image = images[ImageTypes.BOARD_IMAGE][BoardId.GEM];
-        xPos = 295;
-        yPos = 925;
+        xPos = 265;
+        yPos = 920;
 
         ctx.drawImage(
 
@@ -180,12 +179,11 @@ export default class Board{
                 hp += card.health
             }
         }
-        ctx.fillText(hp, image.width / 2 + xPos, image.height / 2 + yPos);
-        ctx.strokeText(hp, image.width / 2 + xPos, image.height / 2 + yPos);
+        this.renderGemHealth(ctx, hp, image.width / 2 + xPos, image.height / 2 + yPos);
 
         image = images[ImageTypes.GAME_RARITY][RarityId.COMMON];
-        xPos = 1595;
-        yPos = 20;
+        xPos = 1600;
+        yPos = 22;
 
         ctx.drawImage(
 
@@ -194,6 +192,35 @@ export default class Board{
 
             this.renderGrids(ctx)
 
+    }
+
+    // El mazo queda bajo el lado derecho del marco de su hueco y asoma por la izquierda
+    renderMinionDeck(ctx, image, frame, frameYPos, centerYPos) {
+
+        const width = 152;
+        const height = 172;
+
+        ctx.save();
+        ctx.shadowColor = "rgba(0, 0, 0, 0.55)";
+        ctx.shadowBlur = 12;
+        ctx.shadowOffsetX = -4;
+        ctx.shadowOffsetY = 5;
+        ctx.drawImage(image, 236 - width, centerYPos - height / 2, width, height);
+        ctx.restore();
+
+        ctx.drawImage(frame, 55, frameYPos);
+    }
+
+    renderGemHealth(ctx, hp, xPos, yPos) {
+
+        ctx.save();
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.85)";
+        ctx.strokeText(hp, xPos, yPos);
+        ctx.fillStyle = "white";
+        ctx.fillText(hp, xPos, yPos);
+        ctx.restore();
     }
 
     renderGrids(ctx) {

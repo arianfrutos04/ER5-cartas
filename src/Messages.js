@@ -96,11 +96,14 @@ export default class Messages{
                 
                 let lines = this.message.initText(language);
 
+                // El bloque de lineas se centra en la posicion del mensaje
+                const linesCenter = lines.length > 0 ? (lines[0].yPos + lines[lines.length - 1].yPos) / 2 : 0;
+
                 for (let i = 0; i < lines.length; i++){
-                    
+
                     const line = lines[i];
-                    
-                    this.renderHelpMessage(ctx, line);
+
+                    this.renderHelpMessage(ctx, line, line.yPos - linesCenter);
                 }
                 break;
                 
@@ -129,12 +132,15 @@ export default class Messages{
         ctx.globalAlpha = 1.0;
     }
 
-    renderHelpMessage(ctx, text){
-        
-        ctx.fillStyle = "white";
+    renderHelpMessage(ctx, text, yOffset){
+
+        ctx.save();
+        ctx.fillStyle = "#3b2414";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
         ctx.globalAlpha = this.alpha;
-        ctx.fillText(text.text, this.xPos, this.yPos + text.yPos);
-        ctx.globalAlpha = 1.0;
+        ctx.fillText(text.text, this.xPos, this.yPos + yOffset);
+        ctx.restore();
     }
     renderChatMessage(ctx, text){
         

@@ -8,20 +8,20 @@ export default class ButtonContainer{
         this.previousState = renderState.GAME
     }
 
-    static create(ctx, assets){
+    static create(ctx, assets, iconAssets){
         // Button(context, x, y, width, height, "texto", estado button, estado fase que devuelve)
-        const btnMove           = new Button(ButttonsId.BTN_MOVE, ctx, 340, 260, 119, 75, ["MOVE", "MUGITU"], ButtonState.NOT_SELECTED, PhaseStates.MOVEMENT, renderState.GAME, assets);
-        const btnPrepareEvent   = new Button(ButttonsId.BTN_PREPARE_EVENT, ctx, 340, 410, 119, 75, ["PREPARE", "PRESTATU"], ButtonState.NOT_SELECTED, PhaseStates.PREPARE_EVENT, renderState.GAME, assets);
-        const btnUseEvent       = new Button(ButttonsId.BTN_USE_EVENT, ctx, 340, 560, 119, 75, ["USE", "ERABILI"], ButtonState.NOT_SELECTED, PhaseStates.USE_EVENT_CARD, renderState.GAME, assets);
-        const btnAttack         = new Button(ButttonsId.BTN_ATTACK, ctx, 340, 710, 119, 75, ["ATTACK", "ERASO"], ButtonState.NOT_SELECTED, PhaseStates.ATTACK, renderState.GAME, assets);
-        const btnEndTurn        = new Button(ButttonsId.BTN_END_TURN, ctx, 1493, 500, 117, 55, ["END\nTURN", "TXANDA\nAMAITU"], ButtonState.NOT_SELECTED, PhaseStates.DISCARD_CARD, renderState.GAME, assets);
-        const btnChangeLanguage = new Button(ButttonsId.BTN_CHANGE_LANGUAGE, ctx, 1593, 1023, 50, 50, ["", ""], ButtonState.NOT_SELECTED, undefined, undefined, assets);
-        const btnQuickHelp      = new Button(ButttonsId.BTN_QUICK_HELP, ctx, 1693, 1023, 50, 50, ["", ""], ButtonState.NOT_SELECTED, undefined, undefined, assets);
-        const btnReturnToMenu   = new Button(ButttonsId.BTN_RETURN_TO_MENU, ctx, 1793, 1023, 50, 50, ["", ""], ButtonState.NOT_SELECTED, undefined, undefined, assets);
+        const btnMove           = new Button(ButttonsId.BTN_MOVE, ctx, 292, 260, 119, 75, ["MOVE", "MUGITU"], ButtonState.NOT_SELECTED, PhaseStates.MOVEMENT, renderState.GAME, assets);
+        const btnPrepareEvent   = new Button(ButttonsId.BTN_PREPARE_EVENT, ctx, 292, 410, 119, 75, ["PREPARE", "PRESTATU"], ButtonState.NOT_SELECTED, PhaseStates.PREPARE_EVENT, renderState.GAME, assets);
+        const btnUseEvent       = new Button(ButttonsId.BTN_USE_EVENT, ctx, 292, 560, 119, 75, ["USE", "ERABILI"], ButtonState.NOT_SELECTED, PhaseStates.USE_EVENT_CARD, renderState.GAME, assets);
+        const btnAttack         = new Button(ButttonsId.BTN_ATTACK, ctx, 292, 710, 119, 75, ["ATTACK", "ERASO"], ButtonState.NOT_SELECTED, PhaseStates.ATTACK, renderState.GAME, assets);
+        const btnEndTurn        = new Button(ButttonsId.BTN_END_TURN, ctx, 1504, 600, 84, 60, ["END\nTURN", "TXANDA\nAMAITU"], ButtonState.NOT_SELECTED, PhaseStates.DISCARD_CARD, renderState.GAME, assets);
+        const btnChangeLanguage = new Button(ButttonsId.BTN_CHANGE_LANGUAGE, ctx, 1597, 1015, 40, 40, ["", ""], ButtonState.NOT_SELECTED, undefined, undefined, iconAssets.slice(0, 3));
+        const btnQuickHelp      = new Button(ButttonsId.BTN_QUICK_HELP, ctx, 1692, 1015, 40, 40, ["", ""], ButtonState.NOT_SELECTED, undefined, undefined, iconAssets.slice(3, 6));
+        const btnReturnToMenu   = new Button(ButttonsId.BTN_RETURN_TO_MENU, ctx, 1787, 1015, 40, 40, ["", ""], ButtonState.NOT_SELECTED, undefined, undefined, iconAssets.slice(6, 9));
         const btnReturnToGame   = new Button(ButttonsId.BTN_RETURN_TO_GAME, ctx, 790, 520, 119, 75, ["BACK TO\nTHE GAME", "JOLASERA\nITZULI"], ButtonState.NOT_SELECTED, undefined, renderState.MENU, assets);
         const btnReturnToLobby  = new Button(ButttonsId.BTN_RETURN_TO_LOBBY, ctx, 995, 520, 119, 75, ["SURRENDER", "ERRENDITU"], ButtonState.NOT_SELECTED, undefined, renderState.MENU, assets);
-        const btnParry          = new Button(ButttonsId.BTN_PARRY, ctx, 340, 360, 119, 75, ["PARRY", "BLOKEATU"], ButtonState.NOT_SELECTED, AttackState.PARRY, renderState.PARRY, assets);
-        const btnNoParry        = new Button(ButttonsId.BTN_NO_PARRY, ctx, 340, 660, 119, 75, ["NO\nPARRY", "EZ\nBLOKEATU"], ButtonState.NOT_SELECTED, AttackState.ATTACK, renderState.PARRY, assets);
+        const btnParry          = new Button(ButttonsId.BTN_PARRY, ctx, 292, 360, 119, 75, ["PARRY", "BLOKEATU"], ButtonState.NOT_SELECTED, AttackState.PARRY, renderState.PARRY, assets);
+        const btnNoParry        = new Button(ButttonsId.BTN_NO_PARRY, ctx, 292, 660, 119, 75, ["NO\nPARRY", "EZ\nBLOKEATU"], ButtonState.NOT_SELECTED, AttackState.ATTACK, renderState.PARRY, assets);
         const btnLeft           = new Button(ButttonsId.BTN_LEFT, ctx, 0, 0, 960, 1080, ["", ""], ButtonState.NOT_SELECTED, undefined, renderState.QUICK_HELP, assets);
         const btnRight          = new Button(ButttonsId.BTN_RIGHT, ctx, 960, 0, 960, 1080, ["", ""], ButtonState.NOT_SELECTED, undefined, renderState.QUICK_HELP, assets);
         const btnLeaveHelp      = new Button(ButttonsId.BTN_LEAVE_QUICK_HELP, ctx, 1800, 0, 120, 120, ["", ""], ButtonState.NOT_SELECTED, undefined, renderState.QUICK_HELP, assets);

@@ -14,7 +14,7 @@ export default class Grid{
     }
 
     // Funcion crea un Grid y sus Slots
-    static initGrids(xPosGrid, yPosGrid, rowsNum, columnsNum, gridId, xSizeSlots, ySizeSlots){
+    static initGrids(xPosGrid, yPosGrid, rowsNum, columnsNum, gridId, xSizeSlots, ySizeSlots, xGapSlots = 6.252, yGapSlots = 6.251){
 
         // Posicion del Grid
         const gridXPos = xPosGrid;
@@ -41,8 +41,8 @@ export default class Grid{
                 const slotsYsize = ySizeSlots;
 
                 // Calculo de la posicion de los Slots
-                let slotsXPos = Math.floor(gridXPos + slotsXsize * j )+ 6.252*j;
-                let slotsYPos = Math.floor(gridYpos + slotsYsize * i )+ 6.251*i;
+                let slotsXPos = Math.floor(gridXPos + slotsXsize * j )+ xGapSlots*j;
+                let slotsYPos = Math.floor(gridYpos + slotsYsize * i )+ yGapSlots*i;
 
                 // Crear Slots
                 const slots = new Slot(slotsXPos, slotsYPos, slotsXsize, slotsYsize);

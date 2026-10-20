@@ -31,6 +31,11 @@ export default class Card{
         this.deck
         // this.objective      = objective;
     }
+    isInEventSlot(size){
+
+        return size === CardId.EVENT_SIZE && this.deck.deckId !== DecksId.PLAYER_1_HAND_DECK && this.deck.deckId !== DecksId.PLAYER_2_HAND_DECK;
+    }
+
     updateScale(mouse, decks){
         
     }

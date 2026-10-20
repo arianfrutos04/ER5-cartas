@@ -145,6 +145,7 @@ export const ImageTypes = {
     CHAT_BUBBLE: 10,
     QUICK_HELP: 11,
     PARTICLE: 12,
+    BUTTON_ICONS: 13,
 }
 export const CardImageId = {
     JOSEPH:     1,
@@ -251,6 +252,9 @@ export const BoardId = {
     MINION_DECK_HALF:   5,
     MINION_DECK_FULL:   6,
     GEM:                7,
+    DECK_FRAME_TOP:     8,
+    DECK_FRAME_BOTTOM:  9,
+    GAME_OVER:          10,
 }
 
 export const IconsPos = {
@@ -286,20 +290,20 @@ export const IconsPos = {
     WEAPON_Y:[15,10],
     ARMOR_X:[191,91],
     ARMOR_Y:[15,10],
-    PLAYER_X:[10,170],
+    PLAYER_X:[10,143],
     PLAYER_Y:[700,215],
-    PLAYER_NAME_X: [200,120],
-    PLAYER_NAME_Y: [787,295],
+    PLAYER_NAME_X: [187,100],
+    PLAYER_NAME_Y: [774,297],
     VFX_X:[-25,-13,-10],
     VFX_Y:[-40,-15,-10],
-    EVENT_FADE_WIDTH: 91,
-    EVENT_FADE_HEIGTH: 93,
+    EVENT_FADE_WIDTH: 92.667,
+    EVENT_FADE_HEIGTH: 92.833,
     EVENT_CD_X: 29,
     EVENT_CD_Y: 47,
     EVENT_CD_IMAGE_X: 48,
     EVENT_CD_IMAGE_Y: 35,
-    ACTIONS_LEFT_X: 1670,
-    ACTIONS_LEFT_Y:130,
+    ACTIONS_LEFT_X: 1644,
+    ACTIONS_LEFT_Y:120,
     TEAM_X: 53,
     TEAM_Y: 132,
     SCALED_WEAPON_X: -228,
@@ -308,8 +312,8 @@ export const IconsPos = {
     SCALED_ARMOR_Y: 50,
     JOSEPH_X: 67,
     JOSEPH_Y: 77,
-    TURN_TIMER_X: 1560,
-    TURN_TIMER_Y: 640,
+    TURN_TIMER_X: 1551,
+    TURN_TIMER_Y: 537,
     EVENT_STATE_X: 44,
     EVENT_STATE_Y: 77,
     CHAT_BUBBLE_X: [400,170],
@@ -332,8 +336,8 @@ export const MessageType = {
 }
 
 export const HelpMessagesPos = {
-    X_POS:  1723,
-    Y_POS:   833,
+    X_POS:  1713,
+    Y_POS:   916,
 }
 
 export const ParticleState = {
