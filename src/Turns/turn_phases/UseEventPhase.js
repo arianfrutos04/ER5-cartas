@@ -1,7 +1,7 @@
 import { CardId, TypeId, PhaseStates, messageUseEventPhase1, messageUseEventPhase2, messageUseEventPhase3, CardActions, BuffId, TypeNames, Sound } from "../../constants.js";
 import Phase from "./Phase.js";
 import Messages from "../../Messages.js";
-import { MessageType, MessageState, TypeColors } from "../../constants.js";
+import { BoardCardSizes, MessageType, MessageState, TypeColors } from "../../constants.js";
 import Card from "../../Cards/Card.js";
 
 export default class UseEventPhase extends Phase{
@@ -17,7 +17,7 @@ export default class UseEventPhase extends Phase{
         this.damageDone             = 0;
         this.turn                   = turn
     }
-    execute(eventContainer, mouse, messagesContainer, soundManager){
+    execute(eventContainer, mouse, messagesContainer, soundManager, particlesContainer){
 
         this.eventGrid.update(mouse, this.eventDeck);
         this.boardGrid.update(mouse, [this.activeMinions, this.enemyActiveMinions]);
@@ -93,6 +93,7 @@ export default class UseEventPhase extends Phase{
                     if(eventCard.action !== CardActions.ON_USE){
                         const message = new Messages(minionCard.xPos, minionCard.yPos, TypeNames[eventCard.category], MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.3, 0.3, 50, TypeColors[eventCard.category]);
                         messagesContainer.addMessage(message);
+                        particlesContainer.createEvent(minionCard.xPos, minionCard.yPos, BoardCardSizes.X_SIZE, BoardCardSizes.Y_SIZE, eventCard.category);
                     }
                     
                     let result;

@@ -73,7 +73,7 @@ export default class Game {
         const timerContainer = new TimerContainer();
         timerContainer.create();
 
-        const particlesContainer = new ParticlesContainer(assets);
+        const particlesContainer = new ParticlesContainer();
         
         const menuXSize = 400;
         const menuYSize = 200;
@@ -243,11 +243,11 @@ export default class Game {
         this.gridsArray.render(images, this.ctx, this.canvas, this.deckContainer, this.currentTurn);
         this.timerContainer.render(this.ctx, this.turnContainer.turnContainer[this.currentTurn].phaseState);
         this.messagesContainer.renderHelp(this.ctx, this.language);
-        this.particlesContainer.renderMovement(this.ctx);
+        this.particlesContainer.renderBelowCards(this.ctx);
         this.menu.render(this.ctx, this.turnContainer.buttonContainer.container[ButttonsId.BTN_RETURN_TO_MENU], this.gameState, this.language);
         this.turnContainer.buttonContainer.renderButtons(this.language, this.gameState === GameState.MENU ? this.menu.previousState : undefined);
         this.turnContainer.render(this.ctx, this.language, this.mouse, this.currentTurn);
-        this.particlesContainer.renderAttack(this.ctx);
+        this.particlesContainer.renderAboveCards(this.ctx);
         this.messagesContainer.renderDamageAndChangeTurn(this.ctx, this.language);
 
         if (this.gameState === GameState.MENU){

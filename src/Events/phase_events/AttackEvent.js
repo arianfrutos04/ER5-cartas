@@ -1,6 +1,6 @@
 import Event from "../Event.js";
 import Messages from "../../Messages.js";
-import { CombatText, MessageState, MessageType, Sound } from "../../constants.js";
+import { AttackImpact, CombatText, MessageState, MessageType, Sound } from "../../constants.js";
 import BlockEvent from "./BlockEvent.js";
 
 export class AttackEvent extends Event{
@@ -13,6 +13,7 @@ export class AttackEvent extends Event{
         this.critic             = 1.75;
         this.fail               = 0;
         this.damageDone         = 0;
+        this.impact             = AttackImpact.NORMAL;  // Resultado del golpe para elegir el efecto
     }
 
     execute(messagesContainer, soundManager) {
@@ -44,6 +45,7 @@ export class AttackEvent extends Event{
             size = 100
             color= "orange"
             damageRender = CombatText.CRITICAL
+            this.impact = AttackImpact.CRITICAL
             sound = this.attackerMinion.weapon ? sound = Sound.ATTACK_CRIT : Sound.ATTACK_PUNCH_CRIT
         }else if(fail){
             damage = 0
@@ -51,6 +53,7 @@ export class AttackEvent extends Event{
             size = 100
             color= "white"
             damageRender = CombatText.BLUNT
+            this.impact = AttackImpact.BLUNT
             sound = Sound.ATTACK_MISS
         }else{
             this.objectiveMinion.health -= damage;
@@ -146,6 +149,8 @@ export class AttackEvent extends Event{
         const critic = this.calculateCritic(dice);
         const fail   = this.calculateFail(dice);
         let sound
+
+        this.impact = fail ? AttackImpact.BLUNT : AttackImpact.BLOCKED;
 
         if (this.attackerMinion.weapon != undefined) {
             // Ataque con los atributos del minion y del arma

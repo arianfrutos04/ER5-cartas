@@ -30,7 +30,6 @@ export default class Asset {
         this.loadButtonImages();
         this.loadChatBubble();
         this.loadQuickHelp();
-        this.loadParticleImages();
         this.loadButtonIcons();
     }
 
@@ -117,11 +116,6 @@ export default class Asset {
     loadQuickHelp(){
 
         this.createImage(Images.quickHelpImages, "helps");
-    }
-
-    loadParticleImages(){
-
-        this.createImage(Images.particleImages, "particles");
     }
 
     loadButtonIcons(){
