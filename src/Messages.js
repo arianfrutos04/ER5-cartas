@@ -84,11 +84,11 @@ export default class Messages{
         switch (this.type){
 
             case MessageType.DAMAGE_MESSAGE:
-                this.renderDamageMessage(ctx);
-                break 
+                this.renderDamageMessage(ctx, language);
+                break
 
             case MessageType.CHANGE_TURN_MESSAGE:
-                this.renderChangeTurnMessage(ctx);
+                this.renderChangeTurnMessage(ctx, language);
                 break;
 
             case MessageType.HELP_MESSAGE:
@@ -123,12 +123,18 @@ export default class Messages{
         }
     }
 
-    renderDamageMessage(ctx){
+    // Los mensajes que se traducen son una pareja [ingles, euskera]; los numeros de daño no
+    getText(language){
+
+        return Array.isArray(this.message) ? this.message[language] : this.message;
+    }
+
+    renderDamageMessage(ctx, language){
 
         ctx.font = this.size + "px LongaIberica-DEMO";
         ctx.fillStyle = this.color;
         ctx.globalAlpha = this.alpha;
-        ctx.fillText(this.message, this.xPos, this.yPos);
+        ctx.fillText(this.getText(language), this.xPos, this.yPos);
         ctx.globalAlpha = 1.0;
     }
 
@@ -149,7 +155,7 @@ export default class Messages{
         ctx.fillText(text.text, this.xPos, this.yPos + text.yPos);
         ctx.globalAlpha = 1.0;
     }
-    renderChangeTurnMessage(ctx){
+    renderChangeTurnMessage(ctx, language){
         
         ctx.fillStyle = 'rgb(0, 0, 0, 0.5)'
         ctx.fillRect(0, 0, 1920, 1080)
@@ -157,7 +163,7 @@ export default class Messages{
         ctx.fillStyle = "rgb(242, 211, 6)";
         ctx.font = this.size+"px LongaIberica-DEMO"
         ctx.globalAlpha = this.alpha;
-        ctx.fillText(this.message, this.xPos, this.yPos);
+        ctx.fillText(this.getText(language), this.xPos, this.yPos);
         ctx.globalAlpha = 1.0;
         ctx.fillStyle = "white";
     }

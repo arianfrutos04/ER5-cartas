@@ -1,5 +1,5 @@
 import Messages from "../../Messages.js";
-import { BlockStates, MessageState, MessageType } from "../../constants.js";
+import { BlockStates, CombatText, MessageState, MessageType } from "../../constants.js";
 import Event from "../Event.js";
 
 export default class BlockEvent extends Event{
@@ -51,14 +51,15 @@ export default class BlockEvent extends Event{
         enemyWeapon.durability = 0;
         
         if (this.damage === 0) {
-            damageRender = "BLOCKED"
+            damageRender = CombatText.BLOCKED
         }else if(this.defenderMinion.health <= 0){
-            damageRender = "DEAD"
+            damageRender = CombatText.DEAD
 
         }else{
-            damageRender = "-" + this.damage + "(" + (initialDmg - this.damage) + ")"
+            const damageText = "-" + this.damage + "(" + (initialDmg - this.damage) + ")"
+            damageRender = [damageText, damageText]
             if (BlockStates.FAILED_BLOCK) {
-                damageRender = "BLOCK BLUNT "+ damageRender
+                damageRender = CombatText.BLOCK_BLUNT.map((text) => text + damageText)
             }
         }
         

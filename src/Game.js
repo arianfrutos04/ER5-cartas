@@ -1,5 +1,5 @@
 import Card from "./Cards/Card.js";
-import { BoardId, BorderId, CardId, CardImageId, DecksId, GameState, GridId, IconsId, IconsPos, ImageTypes, LanguageId, RarityId, TypeId, TurnStates, SlotsState, TurnId, ButtonState, TimerId, PhaseStates, BaseURL, BaseURLValue, MessageState, MessageType, ButttonsId, Sound, renderState } from "./constants.js";
+import { BoardId, BorderId, CardId, CardImageId, DecksId, GameOverText, GameState, GridId, IconsId, IconsPos, ImageTypes, LanguageId, RarityId, TypeId, TurnStates, SlotsState, TurnId, ButtonState, TimerId, PhaseStates, BaseURL, BaseURLValue, MessageState, MessageType, ButttonsId, Sound, renderState } from "./constants.js";
 import Board from "./Board.js";
 import Asset from "./Asset.js";
 import globals from "./globals.js";
@@ -153,7 +153,7 @@ export default class Game {
 
                         this.currentTurn = (this.currentTurn + 1) % 2;
                         const name = this.turnContainer.turnContainer[this.currentTurn].name.toUpperCase()
-                        const message = new Messages(1000, 490, name+"'S TURN", MessageType.CHANGE_TURN_MESSAGE, MessageState.APPEAR, 0.1, 0.2, 1, 100);
+                        const message = new Messages(1000, 490, [name + "'S TURN", "TXANDA: " + name], MessageType.CHANGE_TURN_MESSAGE, MessageState.APPEAR, 0.1, 0.2, 1, 100);
                         this.messagesContainer.changeTurnMessage.push(message)
                         this.setTurnDecksPositions()
                         this.turnCounter++;
@@ -242,7 +242,7 @@ export default class Game {
         this.timerContainer.render(this.ctx, this.turnContainer.turnContainer[this.currentTurn].phaseState);
         this.messagesContainer.renderHelp(this.ctx, this.language);
         this.particlesContainer.renderMovement(this.ctx);
-        this.menu.render(this.ctx, this.turnContainer.buttonContainer.container[ButttonsId.BTN_RETURN_TO_MENU], this.gameState);
+        this.menu.render(this.ctx, this.turnContainer.buttonContainer.container[ButttonsId.BTN_RETURN_TO_MENU], this.gameState, this.language);
         this.turnContainer.buttonContainer.renderButtons(this.language);
         this.turnContainer.render(this.ctx, this.language, this.mouse, this.currentTurn);
         this.particlesContainer.renderAttack(this.ctx);
@@ -250,7 +250,7 @@ export default class Game {
 
         if (this.gameState === GameState.MENU){
 
-            this.menu.render(this.ctx, this.turnContainer.buttonContainer.container[ButttonsId.BTN_RETURN_TO_MENU]);
+            this.menu.render(this.ctx, this.turnContainer.buttonContainer.container[ButttonsId.BTN_RETURN_TO_MENU], undefined, this.language);
             this.turnContainer.buttonContainer.renderButtons(this.language);
         }
     }
@@ -287,7 +287,7 @@ export default class Game {
         const loserCharacter    = this.game.loserCharacter;
 
         this.ctx.font = 30 + "px LongaIberica-DEMO";
-        this.ctx.fillText("GAME OVER", 970, 440);
+        this.ctx.fillText(GameOverText.TITLE[this.language], 970, 440);
 
         this.ctx.drawImage(this.game.winnerCharacter.image[1], winnerXPos - 50, 500);
         this.ctx.drawImage(border, winnerXPos - 50, 500);
@@ -295,19 +295,19 @@ export default class Game {
         this.ctx.drawImage(border, loserXPos -50, 500);
 
 
-        this.ctx.fillText("Winner: " + this.game.winner, winnerXPos, 700);
-        this.ctx.fillText("Melee Hits: " + p1MeleHits, winnerXPos, 740);
-        this.ctx.fillText("Ranged Hits: " + p1RangeHits, winnerXPos, 780);
-        this.ctx.fillText("Damage Done: " + p1DoneDamage, winnerXPos, 820);
-        this.ctx.fillText("Damage Received: " + p1DamageReceived, winnerXPos, 860);
+        this.ctx.fillText(GameOverText.WINNER[this.language] + this.game.winner, winnerXPos, 700);
+        this.ctx.fillText(GameOverText.MELEE_HITS[this.language] + p1MeleHits, winnerXPos, 740);
+        this.ctx.fillText(GameOverText.RANGED_HITS[this.language] + p1RangeHits, winnerXPos, 780);
+        this.ctx.fillText(GameOverText.DAMAGE_DONE[this.language] + p1DoneDamage, winnerXPos, 820);
+        this.ctx.fillText(GameOverText.DAMAGE_RECEIVED[this.language] + p1DamageReceived, winnerXPos, 860);
 
-        this.ctx.fillText("Loser: " + this.game.loser, loserXPos, 700);
-        this.ctx.fillText("Melee Hits: " + p2MeleHits, loserXPos, 740);
-        this.ctx.fillText("Ranged Hits: " + p2RangeHits, loserXPos, 780);
-        this.ctx.fillText("Damage Done: " + p2DoneDamage, loserXPos, 820);
-        this.ctx.fillText("Damage Received: " + p2DamageReceived, loserXPos, 860);
+        this.ctx.fillText(GameOverText.LOSER[this.language] + this.game.loser, loserXPos, 700);
+        this.ctx.fillText(GameOverText.MELEE_HITS[this.language] + p2MeleHits, loserXPos, 740);
+        this.ctx.fillText(GameOverText.RANGED_HITS[this.language] + p2RangeHits, loserXPos, 780);
+        this.ctx.fillText(GameOverText.DAMAGE_DONE[this.language] + p2DoneDamage, loserXPos, 820);
+        this.ctx.fillText(GameOverText.DAMAGE_RECEIVED[this.language] + p2DamageReceived, loserXPos, 860);
 
-        this.ctx.fillText("Click to return to lobby.", 970, 930);
+        this.ctx.fillText(GameOverText.RETURN_TO_LOBBY[this.language], 970, 930);
 
     }
     

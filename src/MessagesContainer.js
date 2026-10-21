@@ -100,7 +100,7 @@ export default class MessagesContainer{
 
         if (this.changeTurnMessage[0] != undefined){
             
-            this.changeTurnMessage[0].render(ctx);
+            this.changeTurnMessage[0].render(ctx, language);
             ctx.fillStyle = "black";
         }
     }

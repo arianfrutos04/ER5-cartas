@@ -1,4 +1,4 @@
-import { TypeId, TypeNames } from "./constants.js";
+import { TooltipText, TypeId, TypeNames } from "./constants.js";
 
 export default class Tooltip {
 
@@ -30,11 +30,11 @@ export default class Tooltip {
                     ctx.fillStyle = 'white';
                     
                     ctx.font ="15px LongaIberica-DEMO";
-                    ctx.fillText('Name: ', xPos + 35, yPos + 20);
+                    ctx.fillText(TooltipText.NAME[language], xPos + 35, yPos + 20);
                     this.texts.texts[1].render(ctx, xPos - 5, yPos - 217, language); 
         
-                    ctx.fillText('Type:', xPos + 36, yPos + 40);
-                    ctx.fillText(TypeNames[this.category], xPos + 115, yPos + 40);
+                    ctx.fillText(TooltipText.TYPE[language], xPos + 36, yPos + 40);
+                    ctx.fillText(TypeNames[this.category][language], xPos + 115, yPos + 40);
                     break;
     
                 case TypeId.WEAPON:
@@ -46,13 +46,13 @@ export default class Tooltip {
                     ctx.fillStyle = 'white'
 
                     ctx.font ="15px LongaIberica-DEMO"
-                    ctx.fillText('Name: ', xPos+35, yPos+20)
+                    ctx.fillText(TooltipText.NAME[language], xPos+35, yPos+20)
                     this.texts.texts[1].render(ctx, xPos-5, yPos-217, language) 
 
-                    ctx.fillText('Type:', xPos+36, yPos+40)
-                    ctx.fillText(TypeNames[this.category], xPos+115, yPos+40)
+                    ctx.fillText(TooltipText.TYPE[language], xPos+36, yPos+40)
+                    ctx.fillText(TypeNames[this.category][language], xPos+115, yPos+40)
 
-                    ctx.fillText('Range:', xPos + 32, yPos + 60)
+                    ctx.fillText(TooltipText.RANGE[language], xPos + 32, yPos + 60)
                     ctx.fillText(range, xPos + 118, yPos + 62)
                     break;
             }

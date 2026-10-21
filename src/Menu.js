@@ -1,4 +1,4 @@
-import { ButtonState, ButttonsId, GameState, ScreenSize, renderState } from "./constants.js";
+import { ButtonState, ButttonsId, GameState, ReturnToMenuText, ScreenSize, renderState } from "./constants.js";
 
 export default class Menu{
     
@@ -51,7 +51,7 @@ export default class Menu{
         return result;
     }
 
-    render(ctx, button, gameState){
+    render(ctx, button, gameState, language){
 
         if (button.state === ButtonState.SELECTED || gameState === GameState.MENU){
             
@@ -65,8 +65,8 @@ export default class Menu{
             ctx.fillRect(this.xPos, this.yPos, this.xSize, this.ySize);
             ctx.fillStyle = "rgb(242, 211, 6)";
             ctx.font = "25px Trajan Color";
-            ctx.fillText("Do you want to return", this.xPos + 200, this.yPos + 30)
-            ctx.fillText("to main menu?", this.xPos + 200, this.yPos + 55)
+            ctx.fillText(ReturnToMenuText.FIRST_LINE[language], this.xPos + 200, this.yPos + 30)
+            ctx.fillText(ReturnToMenuText.SECOND_LINE[language], this.xPos + 200, this.yPos + 55)
         }
     }
 }
