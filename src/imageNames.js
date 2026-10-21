@@ -8,7 +8,7 @@ const cardTypeImages         = ["minion", "buff", "curse", "hero", "joseph", "ar
 const TeamImages             = ["attacker", "defender"];
 const buttonImages           = ["button"]
 const chatBubble             = ["chat_bubble"]
-const quickHelpImages        = ["tuto_1", "tuto_2", "tuto_3", "tuto_4", "tuto_5"];
+const quickHelpImages        = ["tuto_1", "tuto_2", "tuto_3", "tuto_4", "tuto_5", "tuto_4_eu", "tuto_5_eu"];
 const particleImages         = ["attack_particle"];
 const buttonIconImages       = ["language_normal", "language_hover", "language_active", "help_normal", "help_hover", "help_active", "menu_normal", "menu_hover", "menu_active"];
 

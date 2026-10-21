@@ -16,6 +16,7 @@ import Messages from "./Messages.js";
 import ParticlesContainer from "./ParticlesContainer.js";
 import SoundManager from "./SoundManager.js";
 import Menu from "./Menu.js";
+import QuickHelp from "./QuickHelp.js";
 
 export default class Game {
 
@@ -316,7 +317,8 @@ export default class Game {
         this.renderGame()
         this.ctx.filter = "blur(0px)";
         const images = this.images.images[ImageTypes.QUICK_HELP]
-        this.ctx.drawImage( images[this.tutorial], 0, 0)
+        this.ctx.drawImage(QuickHelp.getImage(images, this.tutorial, this.language), 0, 0)
+        QuickHelp.render(this.ctx, this.tutorial, this.language)
     }
 
     updateGame() {
