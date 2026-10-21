@@ -144,8 +144,7 @@ export const ImageTypes = {
     BUTTON: 9,
     CHAT_BUBBLE: 10,
     QUICK_HELP: 11,
-    PARTICLE: 12,
-    BUTTON_ICONS: 13,
+    BUTTON_ICONS: 12,
 }
 export const CardImageId = {
     JOSEPH:     1,
@@ -352,13 +351,6 @@ export const MessageType = {
 export const HelpMessagesPos = {
     X_POS:  1713,
     Y_POS:   916,
-}
-
-export const ParticleState = {
-    APPEAR: 0,
-    ON:     1,
-    FADE:   2,
-    OFF:    3,
 }
 
 export const TimerId = {
@@ -603,6 +595,18 @@ export const BoardCardSizes = {
 }
 
 export const ParticleId = {
-    MOVIMENT:   0,
-    ATTACK:     1,
+    DUST:   0,
+    SMOKE:  1,
+    SPARK:  2,
+    MOTE:   3,
+    RING:   4,
+    FLASH:  5,
+    SLASH:  6,
+}
+
+export const AttackImpact = {
+    NORMAL:     0,
+    CRITICAL:   1,
+    BLUNT:      2,
+    BLOCKED:    3,
 }

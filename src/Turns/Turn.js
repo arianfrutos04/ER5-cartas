@@ -212,7 +212,7 @@ export default class Turn {
                 break;
 
             case PhaseStates.USE_EVENT_CARD:
-                const isUsageFinished = this.phasesArray[PhaseStates.USE_EVENT_CARD].execute(this.eventContainer, mouse, messagesContainer, this.soundManager);
+                const isUsageFinished = this.phasesArray[PhaseStates.USE_EVENT_CARD].execute(this.eventContainer, mouse, messagesContainer, this.soundManager, particlesContainer);
                 const isUseEventCancelled   = this.phasesArray[PhaseStates.USE_EVENT_CARD].isEventCancelled(this.buttonContainer, messagesContainer);
 
                 if (isUsageFinished) {

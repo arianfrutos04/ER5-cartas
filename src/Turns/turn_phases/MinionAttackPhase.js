@@ -50,16 +50,20 @@ export default class MinionAttackPhase extends Phase {
             
             if (distance <= range) {
 
-                if(isAttackWithParry){  
-    
+                let impact;
+
+                if(isAttackWithParry){
+
                     const blockEvent = new AttackEvent(attacker, enemy);
                     blockEvent.attackWithParry(messagesContainer, soundManager);
                     this.damageDone += blockEvent.damageDone;
+                    impact = blockEvent.impact;
                 }else{
-    
+
                     const attackEvent = new AttackEvent(attacker, enemy);
                     attackEvent.execute(messagesContainer, soundManager);
                     this.damageDone += attackEvent.damageDone;
+                    impact = attackEvent.impact;
 
     
                 }
@@ -76,7 +80,12 @@ export default class MinionAttackPhase extends Phase {
                     const enemyXSize = BoardCardSizes.X_SIZE;
                     const enemyYSize = BoardCardSizes.Y_SIZE;
         
-                    particlesContainer.createAttack(enemyXPos, enemyYPos, enemyXSize, enemyYSize);
+                    particlesContainer.createAttack(enemyXPos, enemyYPos, enemyXSize, enemyYSize, impact);
+
+                    if (enemy.health <= 0){
+
+                        particlesContainer.createDeath(enemyXPos, enemyYPos, enemyXSize, enemyYSize);
+                    }
                 
                 return true;
     

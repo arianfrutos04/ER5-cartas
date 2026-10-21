@@ -9,7 +9,6 @@ const TeamImages             = ["attacker", "defender"];
 const buttonImages           = ["action_normal", "action_hover", "action_active", "action_disabled", "menu_panel"]
 const chatBubble             = ["chat_bubble"]
 const quickHelpImages        = ["tuto_1", "tuto_2", "tuto_3", "tuto_4", "tuto_5", "tuto_4_eu", "tuto_5_eu"];
-const particleImages         = ["attack_particle"];
 const buttonIconImages       = ["language_normal", "language_hover", "language_active", "help_normal", "help_hover", "help_active", "menu_normal", "menu_hover", "menu_active"];
 
-export const Images = {backgroundImages, cardBordersImages, cardIconsImages, cardRarityImages, equipmentRarityImages, gameRarityImages, cardTypeImages, TeamImages, buttonImages, chatBubble, quickHelpImages, particleImages, buttonIconImages};
+export const Images = {backgroundImages, cardBordersImages, cardIconsImages, cardRarityImages, equipmentRarityImages, gameRarityImages, cardTypeImages, TeamImages, buttonImages, chatBubble, quickHelpImages, buttonIconImages};
