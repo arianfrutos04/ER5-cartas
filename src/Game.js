@@ -1,5 +1,5 @@
 import Card from "./Cards/Card.js";
-import { BoardId, BorderId, CardId, CardImageId, DecksId, GameState, GridId, IconsId, IconsPos, ImageTypes, LanguageId, RarityId, TypeId, TurnStates, SlotsState, TurnId, ButtonState, TimerId, PhaseStates, BaseURL, BaseURLValue, MessageState, MessageType, ButttonsId, Sound, renderState } from "./constants.js";
+import { BoardId, BorderId, CardId, CardImageId, DecksId, ButtonImageId, GameState, GridId, IconsId, IconsPos, ImageTypes, LanguageId, RarityId, TypeId, TurnStates, SlotsState, TurnId, ButtonState, TimerId, PhaseStates, BaseURL, BaseURLValue, MessageState, MessageType, ButttonsId, Sound, renderState } from "./constants.js";
 import Board from "./Board.js";
 import Asset from "./Asset.js";
 import globals from "./globals.js";
@@ -56,7 +56,7 @@ export default class Game {
         const eventContainer = new EventContainer()
         deckContainer.createDecks(data, cardImgs, language);
 
-        const buttonContainer = ButtonContainer.create(ctx, assets.images[ImageTypes.BUTTON][0], assets.images[ImageTypes.BUTTON_ICONS]);
+        const buttonContainer = ButtonContainer.create(ctx, assets.images[ImageTypes.BUTTON].slice(ButtonImageId.NORMAL, ButtonImageId.MENU_PANEL), assets.images[ImageTypes.BUTTON_ICONS]);
         const soundManager = SoundManager.create()
         soundManager.loadSounds()
         const turns = new TurnContainer(board, deckContainer, buttonContainer, eventContainer);
@@ -80,7 +80,7 @@ export default class Game {
         const menuXPos  = canvas.width / 2 - menuXSize / 2;
         const menuYpos  = canvas.height / 2 - menuYSize / 2;
         
-        const menu = new Menu(menuXPos, menuYpos, menuXSize, menuYSize, assets.images[ImageTypes.BUTTON][0]);
+        const menu = new Menu(menuXPos, menuYpos, menuXSize, menuYSize, assets.images[ImageTypes.BUTTON][ButtonImageId.MENU_PANEL]);
 
         return new Game(turns, assets, language, deckContainer, board, eventContainer, null, canvas, ctx, mouse, firstTurn, messages, timerContainer, particlesContainer, soundManager, menu);
     }
@@ -245,7 +245,7 @@ export default class Game {
         this.messagesContainer.renderHelp(this.ctx, this.language);
         this.particlesContainer.renderMovement(this.ctx);
         this.menu.render(this.ctx, this.turnContainer.buttonContainer.container[ButttonsId.BTN_RETURN_TO_MENU], this.gameState, this.language);
-        this.turnContainer.buttonContainer.renderButtons(this.language);
+        this.turnContainer.buttonContainer.renderButtons(this.language, this.gameState === GameState.MENU ? this.menu.previousState : undefined);
         this.turnContainer.render(this.ctx, this.language, this.mouse, this.currentTurn);
         this.particlesContainer.renderAttack(this.ctx);
         this.messagesContainer.renderDamageAndChangeTurn(this.ctx, this.language);

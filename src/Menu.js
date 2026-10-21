@@ -1,5 +1,9 @@
 import { ButtonState, ButttonsId, GameState, ReturnToMenuText, ScreenSize, renderState } from "./constants.js";
 
+// El pergamino de menu_panel sobresale de la ventana para dejar sitio al marco y la sombra
+const PANEL_OFFSET_X = 59;
+const PANEL_OFFSET_Y = 69;
+
 export default class Menu{
     
     constructor (xPos, yPos, xSize, ySize, image){
@@ -55,18 +59,16 @@ export default class Menu{
 
         if (button.state === ButtonState.SELECTED || gameState === GameState.MENU){
             
-            ctx.fillStyle = "black";
-            ctx.fillRect(this.xPos - 7.5, this.yPos - 7.5, this.xSize + 15, this.ySize + 15);
-            ctx.fillStyle = "#d59d00";
-            ctx.fillRect(this.xPos - 5, this.yPos - 5, this.xSize + 10, this.ySize + 10);
-            ctx.fillStyle = "black";
-            ctx.fillRect(this.xPos - 2.5, this.yPos - 2.5, this.xSize + 5, this.ySize + 5);
-            ctx.fillStyle = "#362315";
-            ctx.fillRect(this.xPos, this.yPos, this.xSize, this.ySize);
-            ctx.fillStyle = "rgb(242, 211, 6)";
-            ctx.font = "25px Trajan Color";
-            ctx.fillText(ReturnToMenuText.FIRST_LINE[language], this.xPos + 200, this.yPos + 30)
-            ctx.fillText(ReturnToMenuText.SECOND_LINE[language], this.xPos + 200, this.yPos + 55)
+            ctx.drawImage(this.image, this.xPos - PANEL_OFFSET_X, this.yPos - PANEL_OFFSET_Y);
+
+            ctx.save();
+            ctx.font = "30px 'EB Garamond'";
+            ctx.fillStyle = "#3b2414";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "alphabetic";
+            ctx.fillText(ReturnToMenuText.FIRST_LINE[language], this.xPos + this.xSize / 2, this.yPos + 28);
+            ctx.fillText(ReturnToMenuText.SECOND_LINE[language], this.xPos + this.xSize / 2, this.yPos + 62);
+            ctx.restore();
         }
     }
 }
