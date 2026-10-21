@@ -205,7 +205,7 @@ export const TypeId = {
     WEAPON:6,
     SPELL: 7,
 }
-export const TypeNames = ["Minion", "Buff", "Curse", "Hero", "Joseph", "Armor", "Weapon", "Spell"]
+export const TypeNames = [["Minion", "Morroia"], ["Buff", "Indartzea"], ["Curse", "Madarikazioa"], ["Hero", "Heroia"], ["Joseph", "Joseph"], ["Armor", "Armadura"], ["Weapon", "Arma"], ["Spell", "Sorginkeria"]]
 
 export const RarityId = {
     COMMON:         0,
@@ -362,6 +362,38 @@ export const BaseURL= [
 // 1 for render base-url
 
 export const BaseURLValue = 0
+
+export const TooltipText = {
+    NAME:   ["Name: ", "Izena: "],
+    TYPE:   ["Type:", "Mota:"],
+    RANGE:  ["Range:", "Irismena:"],
+}
+
+export const ReturnToMenuText = {
+    FIRST_LINE:     ["Do you want to return", "Menu nagusira"],
+    SECOND_LINE:    ["to main menu?", "itzuli nahi duzu?"],
+}
+
+export const GameOverText = {
+    TITLE:              ["GAME OVER", "PARTIDA AMAITUTA"],
+    WINNER:             ["Winner: ", "Irabazlea: "],
+    LOSER:              ["Loser: ", "Galtzailea: "],
+    MELEE_HITS:         ["Melee Hits: ", "Gertuko erasoak: "],
+    RANGED_HITS:        ["Ranged Hits: ", "Urrutiko erasoak: "],
+    DAMAGE_DONE:        ["Damage Done: ", "Eragindako kaltea: "],
+    DAMAGE_RECEIVED:    ["Damage Received: ", "Jasotako kaltea: "],
+    RETURN_TO_LOBBY:    ["Click to return to lobby.", "Egin klik egongelara itzultzeko."],
+}
+
+export const CombatText = {
+    DEAD:           ["DEAD", "HILDA"],
+    WEAPON_BROKEN:  ["WEAPON BROKEN", "ARMA HAUTSITA"],
+    ARMOR_BROKEN:   ["ARMOR BROKEN", "ARMADURA HAUTSITA"],
+    CRITICAL:       ["!! CRITICAL", "!! KRITIKOA"],
+    BLUNT:          ["BLUNT", "HUTS EGIN"],
+    BLOCKED:        ["BLOCKED", "BLOKEATUTA"],
+    BLOCK_BLUNT:    ["BLOCK BLUNT ", "BLOKEO HUTSA "],
+}
 
 export const messageDefaultPhase        = ["Select any button to enter in the phase", "Aukeratu edozein botoi fasean sartzeko"];
 

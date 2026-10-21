@@ -1,6 +1,6 @@
 import Event from "../Event.js";
 import Messages from "../../Messages.js";
-import { MessageState, MessageType, Sound } from "../../constants.js";
+import { CombatText, MessageState, MessageType, Sound } from "../../constants.js";
 import BlockEvent from "./BlockEvent.js";
 
 export class AttackEvent extends Event{
@@ -21,7 +21,7 @@ export class AttackEvent extends Event{
         const fail   = this.calculateFail(dice);
      
         let damage;
-        let damageRender = ""
+        let damageRender = ["", ""]
         let attackerWeapon
         let objectiveWeapon
         let objectiveArmor
@@ -43,14 +43,14 @@ export class AttackEvent extends Event{
             this.objectiveMinion.health -= damage
             size = 100
             color= "orange"
-            damageRender = "!! CRITICAL"
+            damageRender = CombatText.CRITICAL
             sound = this.attackerMinion.weapon ? sound = Sound.ATTACK_CRIT : Sound.ATTACK_PUNCH_CRIT
         }else if(fail){
             damage = 0
             this.objectiveMinion.health -= damage;
             size = 100
             color= "white"
-            damageRender = "BLUNT"
+            damageRender = CombatText.BLUNT
             sound = Sound.ATTACK_MISS
         }else{
             this.objectiveMinion.health -= damage;
@@ -58,22 +58,22 @@ export class AttackEvent extends Event{
 
         soundManager.currentSound = sound
         this.damageDone += damage;
-        damageRender = -damage + damageRender
+        damageRender = damageRender.map((text) => -damage + text)
         if(this.objectiveMinion.health <= 0){
-            damageRender = "DEAD"
+            damageRender = CombatText.DEAD
         }
         
         if (this.attackerMinion.weapon != undefined && this.attackerMinion.weapon.durability <= 0){
             
-            attackerWeapon = new Messages(this.attackerMinion.xPos, this.attackerMinion.yPos + 155, "WEAPON BROKEN", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
+            attackerWeapon = new Messages(this.attackerMinion.xPos, this.attackerMinion.yPos + 155, CombatText.WEAPON_BROKEN, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
         }
         if (this.objectiveMinion.weapon != undefined && this.objectiveMinion.weapon.durability <= 0){
 
-            objectiveWeapon = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos + 155, "WEAPON BROKEN", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
+            objectiveWeapon = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos + 155, CombatText.WEAPON_BROKEN, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
         }
         if (this.objectiveMinion.armor != undefined && this.objectiveMinion.armor.durability <= 0){
 
-            objectiveArmor = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos + 155, "ARMOR BROKEN", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
+            objectiveArmor = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos + 155, CombatText.ARMOR_BROKEN, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
         }
 
         const doneDamage = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos, damageRender, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, size, color);
@@ -176,7 +176,7 @@ export class AttackEvent extends Event{
                 const message = new Messages(enemyWeapon.xPos, enemyWeapon.yPos, defense, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
                 messagesContainer.addMessage(message);
 
-                const damageRender = "BLOCKED"
+                const damageRender = CombatText.BLOCKED
                 const doneDamage = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos, damageRender, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3);
                 messagesContainer.addMessage(doneDamage);
                 this.damageDone += damage;
@@ -215,7 +215,7 @@ export class AttackEvent extends Event{
                 }
 
                 enemyWeapon.durability -= defense;
-                const damageRender = "BLOCKED"
+                const damageRender = CombatText.BLOCKED
                 const doneDamage = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos, damageRender, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3);
                 messagesContainer.addMessage(doneDamage);
                 this.damageDone += damage;
