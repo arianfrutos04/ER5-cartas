@@ -1,5 +1,5 @@
 import Card from "./Cards/Card.js";
-import { BoardId, BorderId, CardId, CardImageId, DecksId, GameOverText, GameState, GridId, IconsId, IconsPos, ImageTypes, LanguageId, RarityId, TypeId, TurnStates, SlotsState, TurnId, ButtonState, TimerId, PhaseStates, BaseURL, BaseURLValue, MessageState, MessageType, ButttonsId, Sound, renderState } from "./constants.js";
+import { BoardId, BorderId, CardId, CardImageId, DecksId, GameState, GridId, IconsId, IconsPos, ImageTypes, LanguageId, RarityId, TypeId, TurnStates, SlotsState, TurnId, ButtonState, TimerId, PhaseStates, BaseURL, BaseURLValue, MessageState, MessageType, ButttonsId, Sound, renderState } from "./constants.js";
 import Board from "./Board.js";
 import Asset from "./Asset.js";
 import globals from "./globals.js";
@@ -17,6 +17,7 @@ import ParticlesContainer from "./ParticlesContainer.js";
 import SoundManager from "./SoundManager.js";
 import Menu from "./Menu.js";
 import QuickHelp from "./QuickHelp.js";
+import GameOverScreen from "./GameOverScreen.js";
 
 export default class Game {
 
@@ -266,50 +267,7 @@ export default class Game {
         const backgroundHeight = background.height * backgroundScale;
         this.ctx.drawImage(background, (this.canvas.width - backgroundWidth) / 2, this.canvas.height - backgroundHeight, backgroundWidth, backgroundHeight);
 
-        const border  = this.images.images[ImageTypes.CARD_BORDER][BorderId.SMALL_SIZE]
-
-
-        this.ctx.fillStyle = "black";
-
-        const winnerXPos = 770;
-        const loserXPos  = 1170;
-
-
-        const p1MeleHits        = this.game.players[0].meleeHits;
-        const p1RangeHits       = this.game.players[0].rangedHits;
-        const p1DoneDamage      = this.game.players[0].damageDone;
-        const p1DamageReceived  = this.game.players[0].damageReceived;
-        
-
-        const p2MeleHits        = this.game.players[1].meleeHits;
-        const p2RangeHits       = this.game.players[1].rangedHits;
-        const p2DoneDamage      = this.game.players[1].damageDone;
-        const p2DamageReceived  = this.game.players[1].damageReceived;
-        const loserCharacter    = this.game.loserCharacter;
-
-        this.ctx.font = 30 + "px LongaIberica-DEMO";
-        this.ctx.fillText(GameOverText.TITLE[this.language], 970, 440);
-
-        this.ctx.drawImage(this.game.winnerCharacter.image[1], winnerXPos - 50, 500);
-        this.ctx.drawImage(border, winnerXPos - 50, 500);
-        this.ctx.drawImage(this.game.loserCharacter.image[1], loserXPos -50, 500);
-        this.ctx.drawImage(border, loserXPos -50, 500);
-
-
-        this.ctx.fillText(GameOverText.WINNER[this.language] + this.game.winner, winnerXPos, 700);
-        this.ctx.fillText(GameOverText.MELEE_HITS[this.language] + p1MeleHits, winnerXPos, 740);
-        this.ctx.fillText(GameOverText.RANGED_HITS[this.language] + p1RangeHits, winnerXPos, 780);
-        this.ctx.fillText(GameOverText.DAMAGE_DONE[this.language] + p1DoneDamage, winnerXPos, 820);
-        this.ctx.fillText(GameOverText.DAMAGE_RECEIVED[this.language] + p1DamageReceived, winnerXPos, 860);
-
-        this.ctx.fillText(GameOverText.LOSER[this.language] + this.game.loser, loserXPos, 700);
-        this.ctx.fillText(GameOverText.MELEE_HITS[this.language] + p2MeleHits, loserXPos, 740);
-        this.ctx.fillText(GameOverText.RANGED_HITS[this.language] + p2RangeHits, loserXPos, 780);
-        this.ctx.fillText(GameOverText.DAMAGE_DONE[this.language] + p2DoneDamage, loserXPos, 820);
-        this.ctx.fillText(GameOverText.DAMAGE_RECEIVED[this.language] + p2DamageReceived, loserXPos, 860);
-
-        this.ctx.fillText(GameOverText.RETURN_TO_LOBBY[this.language], 970, 930);
-
+        GameOverScreen.render(this.ctx, this.images.images[ImageTypes.BOARD_IMAGE][BoardId.GAME_OVER_PANEL], this.game, this.language);
     }
     
     renderHelp(){
@@ -744,27 +702,12 @@ export default class Game {
         
 
         this.game = {
-            players: [
-                {
-                    player_id: p1MongoId,
-                    meleeHits: p1MeleHits,
-                    rangedHits: p1RangeHits,
-                    damageDone: p1DoneDamage,
-                    damageReceived: p2DoneDamage
-                },
-                {
-                    player_id: p2MongoId,
-                    meleeHits: p2MeleHits,
-                    rangedHits: p2RangeHits,
-                    damageDone: p2DoneDamage,
-                    damageReceived: p1DoneDamage
-                },
-
-            ],
             winner: winnerName,
             loser: loserName,
             winnerCharacter: winnerCharacter,
-            loserCharacter:  loserCharacter
+            loserCharacter:  loserCharacter,
+            winnerStats: winner === p1MongoId ? game.players[0] : game.players[1],
+            loserStats:  loser  === p1MongoId ? game.players[0] : game.players[1]
         }
 
 
