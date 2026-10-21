@@ -153,7 +153,7 @@ export default class Game {
 
                         this.currentTurn = (this.currentTurn + 1) % 2;
                         const name = this.turnContainer.turnContainer[this.currentTurn].name.toUpperCase()
-                        const message = new Messages(1000, 490, [name + "'S TURN", "TXANDA: " + name], MessageType.CHANGE_TURN_MESSAGE, MessageState.APPEAR, 0.1, 0.2, 1, 100);
+                        const message = new Messages(1000, 490, [name + "'S TURN", this.getBasqueTurnText(name)], MessageType.CHANGE_TURN_MESSAGE, MessageState.APPEAR, 0.1, 0.2, 1, 100);
                         this.messagesContainer.changeTurnMessage.push(message)
                         this.setTurnDecksPositions()
                         this.turnCounter++;
@@ -492,6 +492,54 @@ export default class Game {
         }
 
         return position + Math.sign(distance) * step;
+    }
+
+    // Genitivo del nombre en euskera: -REN si acaba en vocal y -EN si acaba en consonante.
+    // Si acaba en numero cuenta como se pronuncia su final
+    getBasqueTurnText(name) {
+
+        const lastChar = name.charAt(name.length - 1);
+        const number = name.match(/[0-9]+$/);
+
+        if (number) {
+
+            return name + "-" + (this.basqueNumberEndsInConsonant(number[0]) ? "EN" : "REN") + " TXANDA";
+        }
+
+        if (/[AEIOUÁÉÍÓÚÜ]/.test(lastChar)) {
+
+            return name + "REN TXANDA";
+        }
+
+        if (/[A-ZÑÇ]/.test(lastChar)) {
+
+            return name + "EN TXANDA";
+        }
+
+        return "TXANDA: " + name;
+    }
+
+    // bat (1), bost (5), hamar (10, 30, 50, 70, 90) y ehun (100) acaban en consonante; mila (1000) y el resto, en vocal
+    basqueNumberEndsInConsonant(number) {
+
+        const value = Number(number);
+
+        if (value % 1000 === 0 && value > 0) {
+
+            return false;
+        }
+
+        if (value % 100 === 0 && value > 0) {
+
+            return true;
+        }
+
+        if (value % 10 === 0) {
+
+            return Math.floor(value / 10) % 2 === 1;
+        }
+
+        return value % 10 === 1 || value % 10 === 5;
     }
 
     // funcion para realizar el movimiento
