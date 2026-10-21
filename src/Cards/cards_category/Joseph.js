@@ -41,7 +41,7 @@ export default class Joseph extends Card{
                     if (!mouse.leftClick && mouse.previousStateLeft && this.previousMessage === undefined) {
                         const random = Math.floor(Math.random()*this.messages.length)
                         const message       = this.messages[random]
-                        const text = messagesContainer.createMessage(this.xPos-120, this.yPos+140, message, MessageType.CHAT_MESSAGE, MessageState.APPEAR, 1.5, 0.7, 0.3,25, 100, 600, 17, "black");
+                        const text = messagesContainer.createMessage(IconsPos.JOSEPH_CHAT_TEXT_X, IconsPos.JOSEPH_CHAT_TEXT_Y, message, MessageType.CHAT_MESSAGE, MessageState.APPEAR, 1.5, 0.7, 0.3,25, 100, 600, 17, "black");
                         this.previousMessage = text
                     } else{
                         if (this.previousMessage != undefined) {

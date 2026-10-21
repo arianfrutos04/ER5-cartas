@@ -1,5 +1,5 @@
 import globals from "./globals.js";
-import { MessageState, MessageType } from "./constants.js";
+import { IconsPos, MessageState, MessageType } from "./constants.js";
 
 export default class Messages{
 
@@ -109,13 +109,9 @@ export default class Messages{
                 
             case MessageType.CHAT_MESSAGE:
                 ctx.font = this.message.texts[0].size + "px LongaIberica-DEMO";
-                
-                const textLines = this.message.texts[0].initText(language);
 
-                for (let i = 0; i < textLines.length; i++){
-                    const line = textLines[i];
-                    this.renderChatMessage(ctx, line);
-                }
+                const textLines = this.splitInBalancedLines(ctx, this.message.texts[0].text[language], IconsPos.CHAT_TEXT_MAX_WIDTH);
+                this.renderChatMessage(ctx, textLines);
                 break;
 
             default:
@@ -148,12 +144,77 @@ export default class Messages{
         ctx.fillText(text.text, this.xPos, this.yPos + yOffset);
         ctx.restore();
     }
-    renderChatMessage(ctx, text){
-        
+    // Las lineas se centran en la posicion del mensaje, que es el centro del bocadillo
+    renderChatMessage(ctx, lines){
+
+        const lineHeight = this.message.texts[0].size * 1.35;
+
+        ctx.save();
         ctx.fillStyle = this.color;
         ctx.globalAlpha = this.alpha;
-        ctx.fillText(text.text, this.xPos, this.yPos + text.yPos);
-        ctx.globalAlpha = 1.0;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        for (let i = 0; i < lines.length; i++){
+
+            ctx.fillText(lines[i], this.xPos, this.yPos + (i - (lines.length - 1) / 2) * lineHeight);
+        }
+
+        ctx.restore();
+    }
+
+    // Usa las mismas lineas que necesita el ancho maximo, pero con el ancho mas estrecho posible,
+    // para que queden parecidas y no se quede una palabra sola en la ultima
+    splitInBalancedLines(ctx, text, maxWidth){
+
+        let lines = this.splitInLines(ctx, text, maxWidth);
+        let width = maxWidth;
+
+        while (width > 60){
+
+            const narrowerLines = this.splitInLines(ctx, text, width - 5);
+
+            if (narrowerLines.length > lines.length){
+
+                break;
+            }
+
+            lines = narrowerLines;
+            width -= 5;
+        }
+
+        return lines;
+    }
+
+    // Reparte las palabras en lineas que no superan el ancho maximo con la fuente actual
+    splitInLines(ctx, text, maxWidth){
+
+        const words = text.split(" ").filter((word) => word !== "");
+        const lines = [];
+        let line = "";
+
+        for (let i = 0; i < words.length; i++){
+
+            const testLine = line === "" ? words[i] : line + " " + words[i];
+
+            if (line !== "" && ctx.measureText(testLine).width > maxWidth){
+
+                lines.push(line);
+                line = words[i];
+            }
+
+            else{
+
+                line = testLine;
+            }
+        }
+
+        if (line !== ""){
+
+            lines.push(line);
+        }
+
+        return lines;
     }
     renderChangeTurnMessage(ctx, language){
         

@@ -31,7 +31,7 @@ export default class MainCharacter extends Card{
                             if (this.turnMessage) {
                                 const random = Math.floor(Math.random()*this.messages.length)
                                 const message       = this.messages[random]
-                                const text = messagesContainer.createMessage(this.xPos+280, this.yPos-150, message, MessageType.CHAT_MESSAGE, MessageState.APPEAR, 1.1, 0.5, 0.3,25, 100, 600, 17, "black");
+                                const text = messagesContainer.createMessage(IconsPos.CHAT_TEXT_X[this.yPos < 500 ? 0 : 1], IconsPos.CHAT_TEXT_Y[this.yPos < 500 ? 0 : 1], message, MessageType.CHAT_MESSAGE, MessageState.APPEAR, 1.1, 0.5, 0.3,25, 100, 600, 17, "black");
                                 this.previousMessage = text  
                                 this.turnMessage = false
                             }
@@ -46,7 +46,7 @@ export default class MainCharacter extends Card{
                         if (!mouse.leftClick && mouse.previousStateLeft && this.previousMessage === undefined) {
                             const random = Math.floor(Math.random()*this.messages.length)
                             const message       = this.messages[random]
-                            const text = messagesContainer.createMessage(this.xPos+280, this.yPos-150, message, MessageType.CHAT_MESSAGE, MessageState.APPEAR, 1.5, 0.7, 0.3,25, 100, 600, 17, "black");
+                            const text = messagesContainer.createMessage(IconsPos.CHAT_TEXT_X[this.yPos < 500 ? 0 : 1], IconsPos.CHAT_TEXT_Y[this.yPos < 500 ? 0 : 1], message, MessageType.CHAT_MESSAGE, MessageState.APPEAR, 1.5, 0.7, 0.3,25, 100, 600, 17, "black");
                             this.previousMessage = text
                         } else{
                             if (this.previousMessage != undefined) {
