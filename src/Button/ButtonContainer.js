@@ -33,7 +33,8 @@ export default class ButtonContainer{
     }
 
 
-    renderButtons(language){
+    // backgroundState son los botones que se siguen viendo detras de una ventana, como los de la partida con el menu abierto
+    renderButtons(language, backgroundState){
         
         const state = this.state;
 
@@ -41,7 +42,7 @@ export default class ButtonContainer{
 
             const btn = this.container[i];
 
-            if (btn.renderState === state || btn.renderState === undefined){
+            if (btn.renderState === state || btn.renderState === backgroundState || btn.renderState === undefined){
 
                 btn.render(language);
             }

@@ -243,6 +243,14 @@ export const EventsId = {
     COOLDOWN:   0,
     DURABILITY: 1
 }
+export const ButtonImageId = {
+    NORMAL:     0,
+    HOVER:      1,
+    ACTIVE:     2,
+    DISABLED:   3,
+    MENU_PANEL: 4,
+}
+
 export const BoardId = {
     BOARD:              0,
     EVENT_DECK_EMPTY:   1,

@@ -1,5 +1,12 @@
-import { ButtonState, ButttonsId, LanguageId, PhaseStates, TurnStates, renderState } from "../constants.js";
+import { ButtonImageId, ButtonState, ButttonsId, LanguageId, PhaseStates, TurnStates, renderState } from "../constants.js";
 import ButtonContainer from "./ButtonContainer.js";
+
+// Las placas miden 135 x 93 y sus imagenes tienen 16 px de margen por cada lado para el brillo
+const PLAQUE_WIDTH      = 135;
+const PLAQUE_HEIGHT     = 93;
+const PLAQUE_MARGIN     = 16;
+const PLAQUE_TEXT_WIDTH = 108;
+const PLAQUE_TEXT_COLOR = ["#f1dca4", "#fff1c4", "#fff6dc", "#8f7f62"];
 
 export default class Button {
 
@@ -17,6 +24,7 @@ export default class Button {
         this.renderState    = renderState;
         this.color          = "#582900";
         this.img            = img;
+        this.isEnabled      = true;
 }
 
     render(language){
@@ -31,57 +39,55 @@ export default class Button {
             return;
         }
 
-        if (this.height > 70 && this.height < 100) {
-            this.ctx.drawImage(this.img, this.x, this.y)
-            
-        }
-
         if (this.renderState === renderState.MENU){
 
             this.ctx.filter = "blur(0px)";
         }
 
-        if (this.state === ButtonState.SELECTED) {
-            this.ctx.fillStyle = "#C36F29";
+        if (this.height > 70 && this.height < 100) {
 
-            if (this.id != ButttonsId.BTN_CHANGE_LANGUAGE && this.id != ButttonsId.BTN_RETURN_TO_MENU && this.id != ButttonsId.BTN_QUICK_HELP){
-
-                this.ctx.fillRect(this.x+8, this.y+9, this.width, this.height); 
-            }else{
-                // Llamada a la función para dibujar un rectángulo redondeado
-                this.ctx.beginPath();
-                this.ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
-                this.ctx.fill();
-                this.ctx.closePath();
-            }
-            
-            this.ctx.fillStyle = 'rgb(22, 22, 2)';
-        }else{
-            this.ctx.fillStyle = 'rgb(242, 211, 6)';
+            this.renderPlaque(language);
         }
-        
-        // Texto del botón
-        
-        this.ctx.font           = '20px Trajan Color';
+    }
+
+    // Placa de madera con marco dorado; las acciones sin usos se ven apagadas
+    renderPlaque(language){
+
+        const isDisabled = !this.isEnabled && this.renderState === renderState.GAME;
+        const imageIndex = isDisabled ? ButtonImageId.DISABLED : this.state === ButtonState.SELECTED ? ButtonImageId.ACTIVE : this.state === ButtonState.HOVER ? ButtonImageId.HOVER : ButtonImageId.NORMAL;
+
+        this.ctx.drawImage(this.img[imageIndex], this.x - PLAQUE_MARGIN, this.y - PLAQUE_MARGIN);
+
+        // El texto se reduce hasta caber en la placa en cualquier idioma
+        const lines = this.text[language].split("\n");
+        let size = 20;
+
+        this.ctx.font = "700 " + size + "px Cinzel";
+
+        while (size > 13 && Math.max(...lines.map((line) => this.ctx.measureText(line).width)) > PLAQUE_TEXT_WIDTH) {
+            size -= 1;
+            this.ctx.font = "700 " + size + "px Cinzel";
+        }
+
         this.ctx.textAlign      = 'center';
         this.ctx.textBaseline   = 'middle';
 
-        const text = this.text[language].split("\n")
-        for (let i = 0; i < text.length; i++) {
-            const line = text[i];
-            let modifier = 0
-            if (text.length >1) {
-                modifier = 13
-            }
-            const xPos = (this.x + this.width / 2) + 8
-            const yPos = (this.y + this.height / 2) + 8 + i*25-modifier
-            this.ctx.fillText(line, xPos , yPos);
+        this.ctx.save();
+        this.ctx.fillStyle = PLAQUE_TEXT_COLOR[imageIndex];
+        this.ctx.shadowColor = imageIndex === ButtonImageId.ACTIVE || imageIndex === ButtonImageId.HOVER ? "rgba(255, 196, 80, 0.9)" : "rgba(0, 0, 0, 0.8)";
+        this.ctx.shadowBlur = imageIndex === ButtonImageId.ACTIVE ? 10 : imageIndex === ButtonImageId.HOVER ? 6 : 3;
 
-            
+        const lineHeight = size * 1.2;
+        const xPos = this.x + PLAQUE_WIDTH / 2;
+        const yPos = this.y + PLAQUE_HEIGHT / 2 + 1;
+
+        for (let i = 0; i < lines.length; i++) {
+            this.ctx.fillText(lines[i], xPos, yPos + (i - (lines.length - 1) / 2) * lineHeight);
         }
-       
+
+        this.ctx.restore();
     }
-    
+
     isIconButton(){
 
         return this.id === ButttonsId.BTN_CHANGE_LANGUAGE || this.id === ButttonsId.BTN_QUICK_HELP || this.id === ButttonsId.BTN_RETURN_TO_MENU;
@@ -153,7 +159,9 @@ export default class Button {
         const isCollidingWithMouse = mouse.isCollidingWithButton(this);
         const isAnyButtonSelected = buttonContainer.isAnyButtonSelected();
 
-        if (turn.actionsCounter < turn.maxActions && turn.state != TurnStates.INITIALIZE && timer.value > 0 || turn.state != TurnStates.INITIALIZE && this.id === ButttonsId.BTN_CHANGE_LANGUAGE || turn.state != TurnStates.INITIALIZE && this.id === ButttonsId.BTN_RETURN_TO_MENU){
+        this.isEnabled = turn.actionsCounter < turn.maxActions && turn.state != TurnStates.INITIALIZE && timer.value > 0;
+
+        if (this.isEnabled || turn.state != TurnStates.INITIALIZE && this.id === ButttonsId.BTN_CHANGE_LANGUAGE || turn.state != TurnStates.INITIALIZE && this.id === ButttonsId.BTN_RETURN_TO_MENU){
             
             // MAQUINA DE ESTADOS
             switch(state){
