@@ -12,6 +12,7 @@ export default class MinionMovementPhase extends Phase {
         this.boardGrid = boardGrid;             // Grid del tablero
         this.mouse = mouse;                    // Objeto Mouse
         this.sound = false
+        this.isMoving = false;                  // El esbirro va de camino a la casilla elegida
     }
 
     execute(messagesContainer, particlesContainer, soundManager){
@@ -64,6 +65,7 @@ export default class MinionMovementPhase extends Phase {
         if (minionSelected != undefined && minionSelected.speed >= distance){
 
             if (isAnySlotSelected[0]){
+                this.isMoving = true;
                 if(!this.sound){
                     soundManager.currentSound = Sound.MOVEMENT
                     this.sound = true
@@ -72,6 +74,7 @@ export default class MinionMovementPhase extends Phase {
                 this.boardGrid.cancelAviableSlots();
                 
                 if (isMovementFinish){
+                    this.isMoving = false;
                     this.sound = false
                     this.boardGrid.clearSlots();
                     return true;
