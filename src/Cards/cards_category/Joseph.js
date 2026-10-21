@@ -274,21 +274,6 @@ export default class Joseph extends Card{
                 ctx.font = "25px LongaIberica-DEMO";
                 ctx.fillStyle = "black"
             }
-            if (this.previousMessage != undefined) {
-                if(yPos < 500){
-                    xPos = IconsPos.CHAT_BUBBLE_X[0]
-                    yPos = IconsPos.CHAT_BUBBLE_Y[0]
-                }else {
-                    xPos = IconsPos.CHAT_BUBBLE_X[1]
-                    yPos = IconsPos.CHAT_BUBBLE_Y[1]
-                }
-                ctx.setTransform(0.7, 0, 0, 0.7, 0, 0);
-                ctx.rotate((180 * Math.PI) / 180);
-                ctx.drawImage(
-                    this.chatBubble,               
-                    -2570, -500
-                )
-            }
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             if (this.state === CardId.HOVER) {
                 return true
@@ -297,6 +282,20 @@ export default class Joseph extends Card{
             }
 
     }
+    // El bocadillo se dibuja con el tablero y no con la carta ampliada, y solo mientras dura la frase
+    renderChatBubble(ctx){
+
+        if (this.previousMessage === undefined || this.previousMessage.state === MessageState.OFF){
+
+            return;
+        }
+
+        ctx.setTransform(0.7, 0, 0, 0.7, 0, 0);
+        ctx.rotate(Math.PI);
+        ctx.drawImage(this.chatBubble, -2570, -500);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+
     // renderToolTip(xPos, yPos, language, ctx){
     //     ctx.fillStyle = '#d59d00'
     //     ctx.fillRect(xPos, yPos, 178, 103 ) 

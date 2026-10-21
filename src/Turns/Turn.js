@@ -393,9 +393,11 @@ export default class Turn {
         this.preparingEventDeck.renderCards(ctx, language, mouse);
         this.handDeck.renderCards(ctx, language, mouse);
         this.mainCharacter.render(ctx, language, teamColor);
+        this.mainCharacter.renderChatBubble(ctx);
 
         if (this.josephDeck.cards[0]) {
             this.josephDeck.cards[0].render(ctx, language, currentTurn)
+            this.josephDeck.cards[0].renderChatBubble(ctx)
         }
         ctx.save()
         ctx.font = "24px LongaIberica-DEMO"

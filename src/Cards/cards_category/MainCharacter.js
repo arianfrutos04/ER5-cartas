@@ -182,21 +182,22 @@ export default class MainCharacter extends Card{
                         )
                     }
                     
-                    if (this.previousMessage != undefined) {
-                        if(yPos < 500){
-                            xPos = IconsPos.CHAT_BUBBLE_X[0]
-                            yPos = IconsPos.CHAT_BUBBLE_Y[0]
-                        }else {
-                            xPos = IconsPos.CHAT_BUBBLE_X[1]
-                            yPos = IconsPos.CHAT_BUBBLE_Y[1]
-                        }
-                        ctx.setTransform(0.7, 0, 0, 0.7, 0, 0);
-                        ctx.drawImage(
-                            this.chatBubble,               
-                            xPos, yPos
-                        )
-                    }
                     ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+
+        // El bocadillo se dibuja con el tablero, junto al personaje aunque su carta este ampliada, y solo mientras dura la frase
+        renderChatBubble(ctx){
+
+            if (this.previousMessage === undefined || this.previousMessage.state === MessageState.OFF){
+
+                return;
+            }
+
+            const position = this.yPos < 500 ? 0 : 1;
+
+            ctx.setTransform(0.7, 0, 0, 0.7, 0, 0);
+            ctx.drawImage(this.chatBubble, IconsPos.CHAT_BUBBLE_X[position], IconsPos.CHAT_BUBBLE_Y[position]);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
         }
 
         static create(id, texts, image, rarity, category, type, xPos, yPos, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, vfx, effect, attributes, imageHeroTeam, chatBubble, messages, toolTip) {
