@@ -255,6 +255,7 @@ export const BoardId = {
     DECK_FRAME_TOP:     8,
     DECK_FRAME_BOTTOM:  9,
     GAME_OVER:          10,
+    GAME_OVER_PANEL:    11,
 }
 
 export const IconsPos = {
@@ -381,12 +382,12 @@ export const ReturnToMenuText = {
 
 export const GameOverText = {
     TITLE:              ["GAME OVER", "PARTIDA AMAITUTA"],
-    WINNER:             ["Winner: ", "Irabazlea: "],
-    LOSER:              ["Loser: ", "Galtzailea: "],
-    MELEE_HITS:         ["Melee Hits: ", "Gertuko erasoak: "],
-    RANGED_HITS:        ["Ranged Hits: ", "Urrutiko erasoak: "],
-    DAMAGE_DONE:        ["Damage Done: ", "Eragindako kaltea: "],
-    DAMAGE_RECEIVED:    ["Damage Received: ", "Jasotako kaltea: "],
+    WINNER:             ["WINNER", "IRABAZLEA"],
+    LOSER:              ["LOSER", "GALTZAILEA"],
+    MELEE_HITS:         ["Melee hits", "Gertuko erasoak"],
+    RANGED_HITS:        ["Ranged hits", "Urrutiko erasoak"],
+    DAMAGE_DONE:        ["Damage done", "Eragindako kaltea"],
+    DAMAGE_RECEIVED:    ["Damage received", "Jasotako kaltea"],
     RETURN_TO_LOBBY:    ["Click to return to lobby.", "Egin klik egongelara itzultzeko."],
 }
 
