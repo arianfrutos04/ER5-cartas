@@ -400,6 +400,78 @@ export const CombatText = {
     BLOCK_BLUNT:    ["BLOCK BLUNT ", "BLOKEO HUTSA "],
 }
 
+export const QuickHelpText = {
+    BASICS_TITLE:   ["GAME BASICS", "OINARRIAK"],
+    BASICS:         [
+        ["At the start of the game, each player is given a random main character and draws 5 cards from the event deck.",
+         "Partidaren hasieran, jokalari bakoitzari pertsonaia nagusi bat esleitzen zaio ausaz eta 5 txartel ateratzen ditu gertaeren sortatik."],
+        ["At the start of each turn, all active events are executed. If one of your minions has been destroyed, another one will spawn automatically.",
+         "Txandaren hasieran, aktibo dauden gertaera guztiak exekutatzen dira. Zure minioietako bat suntsitu badute, beste bat agertuko da automatikoki."],
+        ["At the end of your turn, all minions restore their default values, so you won't be able to kill a minion by attacking it over 2 different turns.",
+         "Zure txandaren amaieran, minioi guztiek hasierako balioak berreskuratzen dituzte; beraz, ezin izango duzu minioi bat hil bi txanda desberdinetan erasoz."],
+        ["The game ends when one of the players loses all their health points, which means running out of minions.",
+         "Partida jokalarietako batek bizitza-puntu guztiak galtzen dituenean amaitzen da, hau da, minioirik gabe geratzen denean."],
+    ],
+    PHASES_TITLE:   ["TURN PHASES", "TXANDAREN FASEAK"],
+    PHASES:         [
+        {
+            TITLE:      ["DRAW PHASE", "ATERATZE FASEA"],
+            TEXT:       [["Happens automatically. You draw 1 event card if you have 4 or fewer cards in your hand.",
+                          "Automatikoki gertatzen da. Gertaera-txartel bat ateratzen duzu eskuan 4 txartel edo gutxiago badituzu."]],
+        },
+        {
+            TITLE:      ["ACTION PHASE", "EKINTZA FASEA"],
+            TEXT:       [["Each turn you can perform up to 3 actions. Choose the action you want with the buttons on the left:",
+                          "Txanda bakoitzean gehienez 3 ekintza egin ditzakezu. Aukeratu nahi duzun ekintza ezkerreko botoiekin:"]],
+            ACTIONS:    [["Move minion", "Minioia mugitu"], ["Prepare event", "Gertaera prestatu"], ["Use event", "Gertaera erabili"], ["Attack", "Eraso"]],
+        },
+        {
+            TITLE:      ["DISCARD PHASE", "BAZTERTZE FASEA"],
+            TEXT:       [["Once all your actions are used or the End Turn button has been clicked, if you have 5 or more cards in your hand, you must choose one of them to discard.",
+                          "Ekintza guztiak erabili dituzunean edo txanda amaitzeko botoia sakatu duzunean, eskuan 5 txartel edo gehiago badituzu, eskuko txartel bat aukeratu beharko duzu baztertzeko."],
+                         ["You must choose a card within the time limit; otherwise, one will be discarded at random.",
+                          "Txartela emandako denboraren barruan aukeratu behar duzu; bestela, ausaz baztertuko da."]],
+        },
+    ],
+    PAGES:          [
+        {
+            TITLE:      ["MOVEMENT", "MUGIMENDUA"],
+            TEXT:       [["Select the minion you want to move, and the slots it can move to will be highlighted in green.",
+                          "Aukeratu mugitu nahi duzun minioia, eta mugi daitekeen zirrikituak berdez agertuko dira."],
+                         ["These are limited by the minion's speed.",
+                          "Minioiaren abiadurak mugatzen ditu."]],
+        },
+        {
+            TITLE:      ["ATTACK", "ERASOA"],
+            TEXT:       [["Select the minion you want to attack with, and the slots it can attack will be highlighted.",
+                          "Aukeratu erasotzeko erabili nahi duzun minioia, eta eraso daitezkeen zirrikituak agertuko dira."],
+                         ["These are limited by the minion's attack range, which is 1 by default.",
+                          "Minioiaren eraso-irismenak mugatzen ditu. Hasiera batean, 1."],
+                         ["If the defender has a weapon equipped, the attack can be blocked. An attack can be a critical (x1.5) or a blunt (x0). Even both!",
+                          "Defendatzaileak arma bat jantzita badu, erasoa blokeatu dezake. Erasoa kritikoa (x1,5) edo hutsa (x0) izan daiteke. Baita biak ere!"]],
+            LEGEND:     [["Standard attack", "Eraso arrunta"], ["Melee weapon equipped", "Gertuko arma jantzita"], ["Ranged weapon equipped", "Urrutiko arma jantzita"]],
+        },
+        {
+            TITLE:      ["PREPARE EVENT", "GERTAERA PRESTATU"],
+            TEXT:       [["Select the card in your hand you want to prepare and place it in any empty slot of your event grid.",
+                          "Aukeratu prestatu nahi duzun eskuko txartela eta jarri zure gertaeren laukiko edozein zirrikitu hutsetan."],
+                         ["As soon as a card is placed on the event grid, its cooldown starts: it can't be used until the cooldown reaches 0.",
+                          "Txartela gertaeren laukian jarri bezain laster, itxaronaldia hasiko da: ezin izango da erabili itxaronaldia 0ra iritsi arte."],
+                         ["When the cooldown reaches 0, you can use the card whenever you want. Some special cards are applied instantly when their cooldown is over.",
+                          "Itxaronaldia 0ra iristen denean, nahi duzunean erabili ahal izango duzu. Txartel berezi batzuk berehala aplikatzen dira itxaronaldia amaitzean."]],
+        },
+        {
+            TITLE:      ["USE EVENT", "GERTAERA ERABILI"],
+            TEXT:       [["Select the event you want to use in your event grid, then select the target to apply it to.",
+                          "Aukeratu erabili nahi duzun gertaera zure gertaeren laukian eta aukeratu zeini aplikatu."],
+                         ["Depending on the event, the target must be an ally or an enemy.",
+                          "Aukeratutako gertaeraren arabera, helburua aliatu bat edo etsai bat izango da."],
+                         ["Once applied, the event starts losing durability and is destroyed when its durability reaches 0.",
+                          "Gertaera aplikatzen denean iraunkortasuna galtzen hasiko da, eta iraunkortasuna 0ra iristean suntsituko da."]],
+        },
+    ],
+}
+
 export const messageDefaultPhase        = ["Select any button to enter in the phase", "Aukeratu edozein botoi fasean sartzeko"];
 
 export const messageDiscardPhase        = ["Select any card to discard", "Aukeratu baztertzeko edozein txartel"];
