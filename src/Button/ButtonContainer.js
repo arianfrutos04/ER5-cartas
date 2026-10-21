@@ -59,8 +59,22 @@ export default class ButtonContainer{
     }
 
     updateButtons(mouse, turn, timer) {
-        
+
         const state = this.state;
+
+        // Mientras un esbirro se mueve ningun boton responde, para no cancelar la fase a medio camino
+        if (turn.phasesArray[PhaseStates.MOVEMENT].isMoving){
+
+            for (let i = 0; i < this.container.length; i++){
+
+                if (this.container[i].state === ButtonState.HOVER){
+
+                    this.container[i].state = ButtonState.NOT_SELECTED;
+                }
+            }
+
+            return;
+        }
 
         for (let i = 0; i < this.container.length; i++){
 
