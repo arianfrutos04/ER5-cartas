@@ -202,6 +202,8 @@ export default class Minion extends Card {
         const healthRender = this.state === CardId.SCALED ? this.previousHealth : this.health
         const speedRender = this.state === CardId.SCALED ? this.previousSpeed : this.speed
 
+        this.setSwapTransform(ctx);
+
             //CARD IMAGE
             let size = this.size
             if (this.state === CardId.SCALED ) {

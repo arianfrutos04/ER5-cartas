@@ -79,7 +79,7 @@ export default class Messages{
         }
     }
 
-    render(ctx, language){
+    render(ctx, language, renderUnderBanner){
 
         switch (this.type){
 
@@ -88,7 +88,7 @@ export default class Messages{
                 break
 
             case MessageType.CHANGE_TURN_MESSAGE:
-                this.renderChangeTurnMessage(ctx, language);
+                this.renderChangeTurnMessage(ctx, language, renderUnderBanner);
                 break;
 
             case MessageType.HELP_MESSAGE:
@@ -216,16 +216,55 @@ export default class Messages{
 
         return lines;
     }
-    renderChangeTurnMessage(ctx, language){
-        
-        ctx.fillStyle = 'rgb(0, 0, 0, 0.5)'
-        ctx.fillRect(0, 0, 1920, 1080)
-        
-        ctx.fillStyle = "rgb(242, 211, 6)";
-        ctx.font = this.size+"px LongaIberica-DEMO"
-        ctx.globalAlpha = this.alpha;
-        ctx.fillText(this.getText(language), this.xPos, this.yPos);
-        ctx.globalAlpha = 1.0;
+    // Velo oscuro y banda con filos dorados que entran y salen suavemente; el texto va centrado en la pantalla.
+    // renderUnderBanner pinta lo que pasa por delante del velo y por detras de la banda, como las cartas que cambian de sitio
+    renderChangeTurnMessage(ctx, language, renderUnderBanner){
+
+        const alpha = Math.min(1, Math.max(0, this.alpha));
+        const bandTop = 405;
+        const bandHeight = 170;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        ctx.fillStyle = "rgba(10, 6, 3, 0.7)";
+        ctx.fillRect(0, 0, 1920, 1080);
+        ctx.restore();
+
+        if (renderUnderBanner !== undefined){
+
+            renderUnderBanner();
+        }
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        const band = ctx.createLinearGradient(0, 0, 1920, 0);
+        band.addColorStop(0, "rgba(20, 10, 4, 0)");
+        band.addColorStop(0.25, "rgba(20, 10, 4, 0.92)");
+        band.addColorStop(0.75, "rgba(20, 10, 4, 0.92)");
+        band.addColorStop(1, "rgba(20, 10, 4, 0)");
+        ctx.fillStyle = band;
+        ctx.fillRect(0, bandTop, 1920, bandHeight);
+
+        const edge = ctx.createLinearGradient(0, 0, 1920, 0);
+        edge.addColorStop(0.1, "rgba(224, 170, 70, 0)");
+        edge.addColorStop(0.5, "rgba(255, 214, 120, 1)");
+        edge.addColorStop(0.9, "rgba(224, 170, 70, 0)");
+        ctx.fillStyle = edge;
+        ctx.fillRect(0, bandTop, 1920, 3);
+        ctx.fillRect(0, bandTop + bandHeight - 3, 1920, 3);
+
+        ctx.font = "700 " + Math.round(this.size * 0.8) + "px Cinzel";
+        ctx.letterSpacing = "6px";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.shadowColor = "rgba(255, 190, 70, 0.6)";
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = "#f6d77a";
+        ctx.fillText(this.getText(language), 960, bandTop + bandHeight / 2 + 4);
+
+        ctx.restore();
         ctx.fillStyle = "white";
     }
 }

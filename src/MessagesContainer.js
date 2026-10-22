@@ -85,7 +85,7 @@ export default class MessagesContainer{
         }
     }
 
-    renderDamageAndChangeTurn(ctx, language){
+    renderDamageAndChangeTurn(ctx, language, renderUnderBanner){
           
         for (let i = 0; i < this.damageMessage.length; i++){
 
@@ -100,7 +100,7 @@ export default class MessagesContainer{
 
         if (this.changeTurnMessage[0] != undefined){
             
-            this.changeTurnMessage[0].render(ctx, language);
+            this.changeTurnMessage[0].render(ctx, language, renderUnderBanner);
             ctx.fillStyle = "black";
         }
     }

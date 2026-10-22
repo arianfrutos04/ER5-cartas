@@ -128,6 +128,9 @@ export default class MainCharacter extends Card{
             let yPos = this.yPos
                 ctx.font = "25px LongaIberica-DEMO";
             let cardVFX
+
+            this.setSwapTransform(ctx);
+
                 //CARD IMAGE
                 let size = this.size
                 if (this.state === CardId.SCALED ) {

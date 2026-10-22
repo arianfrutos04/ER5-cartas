@@ -62,8 +62,8 @@ export default class ButtonContainer{
 
         const state = this.state;
 
-        // Mientras un esbirro se mueve ningun boton responde, para no cancelar la fase a medio camino
-        if (turn.phasesArray[PhaseStates.MOVEMENT].isMoving){
+        // Mientras un esbirro se mueve o el turno espera para cerrarse ningun boton responde
+        if (turn.phasesArray[PhaseStates.MOVEMENT].isMoving || turn.isWaitingToEnd()){
 
             for (let i = 0; i < this.container.length; i++){
 

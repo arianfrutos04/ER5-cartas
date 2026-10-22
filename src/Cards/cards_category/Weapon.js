@@ -166,14 +166,14 @@ export default class Weapon extends Card{
         const defenseRender = this.state === CardId.SCALED ? this.previousDefense : this.defense
 
         if (this.deck.deckId === DecksId.PLAYER_1_HAND_DECK || this.deck.deckId === DecksId.PLAYER_2_HAND_DECK) {
-            ctx.setTransform(0.8, 0, 0, 0.8, 0, 0);
+            this.setHandTransform(ctx);
 
                     xPos = this.xPos * 1.25
                     yPos = this.yPos * 1.25
                 }
             
         
-        if (this.state != CardId.BLOCKED) {
+        if (!this.isShowingBack()) {
             // console.log(this.imageVFX);
             ctx.fillStyle = "black"
                 ctx.font = "25px LongaIberica-DEMO";
