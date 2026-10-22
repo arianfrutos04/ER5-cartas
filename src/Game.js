@@ -19,6 +19,15 @@ import Menu from "./Menu.js";
 import QuickHelp from "./QuickHelp.js";
 import GameOverScreen from "./GameOverScreen.js";
 
+// Al cambiar de turno el cartel entra primero y, con el velo ya oscuro, el tablero cambia de lado: los esbirros y
+// personajes pasan a su nuevo sitio y las manos y los eventos preparados cruzan el tablero hacia el suyo
+const TURN_SWAP_DELAY       = 0.3;
+const CARD_FLIGHT_DURATION  = 0.7;
+const CARD_FLIGHT_DELAY     = 0.05;
+const CARD_FLIGHT_STAGGER   = 0.06;
+const PIECE_OPEN_DURATION   = 0.35;
+const PIECE_OPEN_STAGGER    = 0.05;
+
 export default class Game {
 
     constructor(turnArray, images, language, deckContainer, gridsArray, eventContainer, rarity,canvas, ctx, mouse, firstTurn, messagesContainer, timerContainer, particlesContainer, soundManager, menu) {
@@ -30,6 +39,10 @@ export default class Game {
         this.gridsArray = gridsArray;
         this.eventContainer = eventContainer;
         this.turnCounter = 0;
+        this.flyingDecks = [];
+        this.turnSwapTime = 0;                          // Tiempo que falta para que el tablero cambie de lado
+        this.swapPieces = [];                           // Esbirros y personajes que se dan la vuelta al cambiar de lado
+        this.swapTime = 0;
         this.rarity = rarity;
         this.gameState = GameState.LOAD_GAME;
         this.canvas = canvas;
@@ -138,14 +151,27 @@ export default class Game {
                 this.updateGame();
                 this.soundManager.gameState = this.gameState
                 this.soundManager.playSound()
-                this.deckContainer.updateScale(this.mouse, this.turnContainer.turnContainer[this.currentTurn].state, this.messagesContainer, this.language);
+
+                // Mientras el turno espera para cerrarse no se amplian cartas ni vuelven los tooltips
+                if (!this.turnContainer.turnContainer[this.currentTurn].isWaitingToEnd()){
+
+                    this.deckContainer.updateScale(this.mouse, this.turnContainer.turnContainer[this.currentTurn].state, this.messagesContainer, this.language);
+                }
+
                 this.turnContainer.buttonContainer.updateButtons(this.mouse, this.turnContainer.turnContainer[this.currentTurn], this.timerContainer.timer[TimerId.TURN_TIMER]);
-                this.turnContainer.turnContainer[this.currentTurn].update(this.mouse, this.turnContainer.turnContainer[(this.currentTurn+1)%2].activeMinionDeck, this.messagesContainer, this.timerContainer, this.particlesContainer);
+
+                // Mientras entra el cartel ningun turno avanza
+                if (this.turnSwapTime <= 0){
+
+                    this.turnContainer.turnContainer[this.currentTurn].update(this.mouse, this.turnContainer.turnContainer[(this.currentTurn+1)%2].activeMinionDeck, this.messagesContainer, this.timerContainer, this.particlesContainer);
+                }
+
                 this.mouse.update();
                 this.particlesContainer.update();
                 
                 if(this.turnContainer.turnContainer[this.currentTurn].activeMinionDeck.cards.length +
-                   this.turnContainer.turnContainer[this.currentTurn].minionDeck.cards.length === 0){
+                   this.turnContainer.turnContainer[this.currentTurn].minionDeck.cards.length === 0 ||
+                   this.turnContainer.turnContainer[this.currentTurn].hasWon()){
                     this.gameState = GameState.SEND_DATA;
                 }else{
                     if(this.turnContainer.turnContainer[this.currentTurn].finished){
@@ -153,13 +179,24 @@ export default class Game {
                         this.turnContainer.turnContainer[this.currentTurn].state = TurnStates.INITIALIZE;
 
 
-                        this.currentTurn = (this.currentTurn + 1) % 2;
-                        const name = this.turnContainer.turnContainer[this.currentTurn].name.toUpperCase()
-                        const message = new Messages(1000, 490, [name + "'S TURN", this.getBasqueTurnText(name)], MessageType.CHANGE_TURN_MESSAGE, MessageState.APPEAR, 0.1, 0.2, 1, 100);
+                        const name = this.turnContainer.turnContainer[(this.currentTurn + 1) % 2].name.toUpperCase()
+                        const message = new Messages(1000, 490, [name + "'S TURN", this.getBasqueTurnText(name)], MessageType.CHANGE_TURN_MESSAGE, MessageState.APPEAR, 0.3, 0.2, 1.3, 100);
                         this.messagesContainer.changeTurnMessage.push(message)
-                        this.setTurnDecksPositions()
-                        this.turnCounter++;
+                        this.turnSwapTime = TURN_SWAP_DELAY;
+                        this.startPieceSwap();
+                    }
 
+                    // El tablero cambia de lado cuando el velo del cartel ya ha entrado
+                    if (this.turnSwapTime > 0){
+
+                        this.turnSwapTime -= globals.deltaTime;
+
+                        if (this.turnSwapTime <= 0){
+
+                            this.currentTurn = (this.currentTurn + 1) % 2;
+                            this.setTurnDecksPositions()
+                            this.turnCounter++;
+                        }
                     }
                     this.messagesContainer.update();
                 }
@@ -248,7 +285,8 @@ export default class Game {
         this.turnContainer.buttonContainer.renderButtons(this.language, this.gameState === GameState.MENU ? this.menu.previousState : undefined);
         this.turnContainer.render(this.ctx, this.language, this.mouse, this.currentTurn);
         this.particlesContainer.renderAboveCards(this.ctx);
-        this.messagesContainer.renderDamageAndChangeTurn(this.ctx, this.language);
+        // Mientras se ve el cartel de turno, las cartas que cambian de sitio pasan por delante del velo y por detras de la banda
+        this.messagesContainer.renderDamageAndChangeTurn(this.ctx, this.language, () => this.renderFlyingCards());
 
         if (this.gameState === GameState.MENU){
 
@@ -288,6 +326,8 @@ export default class Game {
         this.showHelpIfBtnSelected();
 
         // Funcion que posiciona las Cards en la posicion de los Slots
+        this.updateCardFlights();
+        this.updatePieceSwap();
         const turn = this.turnContainer.turnContainer[this.currentTurn];
         const enemyTurn = this.turnContainer.turnContainer[(this.currentTurn+1)%2];
 
@@ -420,6 +460,7 @@ export default class Game {
         }
     }
 
+    // Las cartas van hacia su Slot poco a poco, o siguen su animacion si estan cambiando de sitio con el turno
     assignCardsToGrids(decks, grids) {
 
         let k = 0;
@@ -430,13 +471,140 @@ export default class Game {
 
                 if (decks.cards[k]){
 
-                    decks.cards[k].xPos = this.moveTowards(decks.cards[k].xPos, grids.slots[i][j].xPos, 900);
-                    decks.cards[k].yPos = this.moveTowards(decks.cards[k].yPos, grids.slots[i][j].yPos, 1000);
+                    if (decks.cards[k].flight !== undefined){
+
+                        this.flyCard(decks.cards[k], grids.slots[i][j]);
+                    }
+
+                    else{
+
+                        decks.cards[k].xPos = this.moveTowards(decks.cards[k].xPos, grids.slots[i][j].xPos, 900);
+                        decks.cards[k].yPos = this.moveTowards(decks.cards[k].yPos, grids.slots[i][j].yPos, 1000);
+                    }
 
                     grids.slots[i][j].isEmpty = false;
                     k++
                 }
             }
+        }
+    }
+
+    // Cada carta sale desde donde esta y va hacia su Slot un poco despues que la anterior, como al repartir
+    startCardFlights(decks){
+
+        this.flyingDecks = decks;
+
+        for (let i = 0; i < decks.length; i++){
+
+            for (let j = 0; j < decks[i].cards.length; j++){
+
+                const card = decks[i].cards[j];
+                card.flight = { xStart: card.xPos, yStart: card.yPos, time: -(CARD_FLIGHT_DELAY + j * CARD_FLIGHT_STAGGER) };
+            }
+        }
+    }
+
+    // Las cartas en vuelo llevan debajo una sombra del tamano de su Slot, para que se vea que pasan por encima
+    renderFlyingCards(){
+
+        const grids = [GridId.PLAYER_2_HAND_GRID, GridId.PLAYER_2_EVENT_GRID, GridId.PLAYER_1_HAND_GRID, GridId.PLAYER_1_EVENT_GRID];
+
+        for (let i = 0; i < this.flyingDecks.length; i++){
+
+            const slot = this.gridsArray.grids[grids[i]].slots[0][0];
+            const cards = this.flyingDecks[i].cards;
+
+            this.ctx.save();
+            this.ctx.filter = "blur(10px)";
+            this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+
+            for (let j = 0; j < cards.length; j++){
+
+                if (cards[j].flight !== undefined && cards[j].flight.time > 0){
+
+                    this.ctx.fillRect(cards[j].xPos + 8, cards[j].yPos + 14, slot.xSize, slot.ySize);
+                }
+            }
+
+            this.ctx.restore();
+            this.flyingDecks[i].renderCards(this.ctx, this.language, this.mouse);
+        }
+    }
+
+    startPieceSwap(){
+
+        const turns = this.turnContainer.turnContainer;
+
+        this.swapPieces = [...turns[this.currentTurn].activeMinionDeck.cards, ...turns[(this.currentTurn + 1) % 2].activeMinionDeck.cards, turns[0].mainCharacter, turns[1].mainCharacter];
+        this.swapTime = 0;
+    }
+
+    // Se cierran todos a la vez mientras entra el velo y, ya en su nuevo sitio, se abren uno tras otro
+    updatePieceSwap(){
+
+        if (this.swapPieces.length === 0){
+
+            return;
+        }
+
+        this.swapTime += globals.deltaTime;
+
+        let isSwapOver = true;
+
+        for (let i = 0; i < this.swapPieces.length; i++){
+
+            const piece = this.swapPieces[i];
+
+            if (this.swapTime < TURN_SWAP_DELAY){
+
+                piece.swapScale = Math.cos(this.swapTime / TURN_SWAP_DELAY * Math.PI / 2);
+                isSwapOver = false;
+            }
+
+            else{
+
+                const progress = (this.swapTime - TURN_SWAP_DELAY - i * PIECE_OPEN_STAGGER) / PIECE_OPEN_DURATION;
+
+                piece.swapScale = Math.sin(Math.min(1, Math.max(0, progress)) * Math.PI / 2);
+                isSwapOver = isSwapOver && progress >= 1;
+            }
+        }
+
+        if (isSwapOver){
+
+            this.swapPieces.forEach((piece) => piece.swapScale = undefined);
+            this.swapPieces = [];
+        }
+    }
+
+    updateCardFlights(){
+
+        for (let i = 0; i < this.flyingDecks.length; i++){
+
+            for (let j = 0; j < this.flyingDecks[i].cards.length; j++){
+
+                const card = this.flyingDecks[i].cards[j];
+
+                if (card.flight !== undefined){
+
+                    card.flight.time += globals.deltaTime;
+                }
+            }
+        }
+    }
+
+    // Recorrido con aceleracion y frenada suaves hasta el Slot
+    flyCard(card, slot){
+
+        const progress = Math.min(1, Math.max(0, card.flight.time / CARD_FLIGHT_DURATION));
+        const eased = progress < 0.5 ? 4 * Math.pow(progress, 3) : 1 - Math.pow(2 - 2 * progress, 3) / 2;
+
+        card.xPos = card.flight.xStart + (slot.xPos - card.flight.xStart) * eased;
+        card.yPos = card.flight.yStart + (slot.yPos - card.flight.yStart) * eased;
+
+        if (progress >= 1){
+
+            card.flight = undefined;
         }
     }
 
@@ -532,6 +700,7 @@ export default class Game {
         this.gridsArray.grids[GridId.PLAYER_2_EVENT_GRID].freeSlots()
         enemyTurn.phasesArray[PhaseStates.PREPARE_EVENT].setEventGrid(this.gridsArray.grids[GridId.PLAYER_2_EVENT_GRID])
         enemyTurn.phasesArray[PhaseStates.USE_EVENT_CARD].setEventGrid(this.gridsArray.grids[GridId.PLAYER_2_EVENT_GRID])
+        this.startCardFlights([enemyTurn.handDeck, enemyTurn.preparingEventDeck, turn.handDeck, turn.preparingEventDeck])
         this.assignCardsToGrids(enemyTurn.handDeck, this.gridsArray.grids[GridId.PLAYER_2_HAND_GRID])
         this.assignCardsToGrids(enemyTurn.preparingEventDeck, this.gridsArray.grids[GridId.PLAYER_2_EVENT_GRID])
 

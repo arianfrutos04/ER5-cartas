@@ -1,6 +1,6 @@
 
 import Text from "./Text.js";
-import { LanguageId , IconsPos, messageDefaultPhase, messageDiscardPhase, messageMovimentPhase1, messageMovimentPhase2, messageAttackPhase1, messageAttackPhase2, messagePrepareEventPhase1, messagePrepareEventPhase2, messageUseEventPhase1, messageUseEventPhase2, messageUseEventPhase3 } from "./constants.js";
+import { LanguageId , IconsPos, messageDefaultPhase, messageDiscardPhase, messageEndTurn, messageMovimentPhase1, messageMovimentPhase2, messageAttackPhase1, messageAttackPhase2, messagePrepareEventPhase1, messagePrepareEventPhase2, messageUseEventPhase1, messageUseEventPhase2, messageUseEventPhase3 } from "./constants.js";
 
 export default class TextContainer{
 
@@ -31,7 +31,8 @@ export default class TextContainer{
         const useEventPhase1        = new Text(messageUseEventPhase1, null, 18, 25, 130, 700);
         const useEventPhase2        = new Text(messageUseEventPhase2, null, 18, 25, 130, 700);
         const useEventPhase3        = new Text(messageUseEventPhase3, null, 18, 25, 130, 700);
-        const container             = [defaultPhase, discardPhase, movimentPhase1, movimentPhase2, attackPhase1, attackPhase2, prepareEventPhase1, prepareEventPhase2, useEventPhase1, useEventPhase2, useEventPhase3];
+        const endTurn               = new Text(messageEndTurn, null, 18, 25, 130, 700);
+        const container             = [defaultPhase, discardPhase, movimentPhase1, movimentPhase2, attackPhase1, attackPhase2, prepareEventPhase1, prepareEventPhase2, useEventPhase1, useEventPhase2, useEventPhase3, endTurn];
 
         return new TextContainer(container);
     }

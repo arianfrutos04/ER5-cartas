@@ -1,4 +1,4 @@
-import { BoardId, CardId, DecksId, GridId, MovePhaseStates, PhaseStates, TimerId, TurnStates, MessageType , IconsPos, ScreenSize, ButtonState, TurnId, Team, BuffId, CurseId, renderState, AttackState, Sound, ButttonsId} from "../constants.js";
+import { BoardId, CardId, DecksId, GridId, MovePhaseStates, PhaseStates, TimerId, TurnStates, MessageType , IconsPos, ScreenSize, ButtonState, TurnId, Team, BuffId, CurseId, renderState, AttackState, Sound, ButttonsId, messageEndTurn} from "../constants.js";
 import globals from "../globals.js";
 import DiscardPhase from "./turn_phases/DiscardPhase.js";
 import DrawCardPhase from "./turn_phases/DrawCardPhase.js";
@@ -8,6 +8,14 @@ import MinionMovementPhase from "./turn_phases/MinionMovementPhase.js";
 import Phase from "./turn_phases/Phase.js"; 
 import PrepareEventPhase from "./turn_phases/PrepareEventPhase.js";
 import UseEventPhase from "./turn_phases/UseEventPhase.js";
+
+// Segundos que se espera al terminar el turno, antes del descarte y del cambio, para que se vea la ultima accion
+const TURN_END_DELAY = 1.2;
+
+// Centro del mazo de esbirros del jugador en turno, de donde salen los esbirros nuevos
+const MINION_DECK_X         = 160;
+const MINION_DECK_Y         = 953;
+const MINION_SPAWN_STAGGER  = 0.2;
 
 export default class Turn {
 
@@ -32,6 +40,8 @@ export default class Turn {
         this.buttonContainer    = buttonContainer;          // Contenedor de buttons
         this.active             = false;                    // Variable para saber si el turno esta activo
         this.state              = TurnStates.INITIALIZE;     // Estado del turno
+        this.endWaitTime        = 0;                        // Tiempo que lleva esperando para cerrar el turno
+        this.isVictory          = false;                    // El rival se ha quedado sin esbirros
         this.phaseState         = PhaseStates.DEFAULT;      // Estado de la fase
         this.phasesArray        = [];                       // Array de fases
         this.actionsCounter     = 0;                        // Contador de acciones maximo 5
@@ -100,10 +110,19 @@ export default class Turn {
                 break;
             
             case TurnStates.EXECUTION:
+
+                // Tras el golpe final se espera lo mismo que al cerrar un turno para que se vea antes de acabar la partida
+                if (this.isVictory){
+
+                    this.endWaitTime += globals.deltaTime;
+                    break;
+                }
+
                 const isPhasesOver = this.execute(mouse, messagesContainer, timerContainer, particlesContainer);
-                
+
                 if (enemyActiveMinionDeck.cards.length + this.enemyMinionDeck.cards.length === 0) {
-                    this.finished = true
+                    this.isVictory = true
+                    this.deselect();
                 }else{
                     if (isPhasesOver) {
                        this.state = TurnStates.END
@@ -114,10 +133,25 @@ export default class Turn {
                 break;
 
             case TurnStates.END:
-         
+
+                if (this.isWaitingToEnd()){
+
+                    // Al empezar la espera se quitan selecciones y tooltips para que solo quede a la vista el resultado
+                    if (this.endWaitTime === 0){
+
+                        this.deselect();
+                        this.gridArray.grids[GridId.BOARD_GRID].cancelAviableSlots();
+                        messagesContainer.activeMessage(messageEndTurn);
+                    }
+
+                    this.endWaitTime += globals.deltaTime;
+                    break;
+                }
+
                 const isEndTurn = this.end(messagesContainer, mouse, timerContainer);
                 if (isEndTurn) {
 
+                    this.endWaitTime = 0;
                     this.mainCharacter.previousMessage = undefined
                     messagesContainer.damageMessage = []
                     this.finished = true
@@ -126,6 +160,16 @@ export default class Turn {
                 break;
         }
 
+    }
+
+    isWaitingToEnd(){
+
+        return (this.state === TurnStates.END || this.isVictory) && this.endWaitTime < TURN_END_DELAY;
+    }
+
+    hasWon(){
+
+        return this.isVictory && this.endWaitTime >= TURN_END_DELAY;
     }
 
     init(timerContainer, mouse, messagesContainer){
@@ -147,6 +191,7 @@ export default class Turn {
             this.restoreCardStatesFromActiveDecks()
             // Spawnear nuevo Minion
             if (this.minionDeck.cards.length>0) {
+            let spawnCounter = 0;
             for (; this.activeMinionDeck.cards.length < 3;) {
                     const newMinion = this.minionDeck.spawnNewMinions(this.activeMinionDeck);
                     
@@ -154,6 +199,8 @@ export default class Turn {
                     if (newMinion != undefined){
                         
                         newMinion.assignMinionToBoardGrid(this.gridArray.grids[GridId.BOARD_GRID], this.turnId);
+                        newMinion.startSpawn(MINION_DECK_X, MINION_DECK_Y, spawnCounter * MINION_SPAWN_STAGGER);
+                        spawnCounter++;
                     } 
                     if (this.minionDeck.cards.length === 0) {
                         break;

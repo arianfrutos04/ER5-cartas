@@ -176,7 +176,7 @@ export default class Spell extends Card{
         const cooldownRender = this.state === CardId.SCALED ? this.previousCooldown : this.cooldown
 
         if (this.deck.deckId === DecksId.PLAYER_1_HAND_DECK || this.deck.deckId === DecksId.PLAYER_2_HAND_DECK) {
-            ctx.setTransform(0.8, 0, 0, 0.8, 0, 0);
+            this.setHandTransform(ctx);
             for (let i = 0; i < this.deck.cards.length; i++) {
                 const card = this.deck.cards[i];
                 if (this === card) {
@@ -185,7 +185,7 @@ export default class Spell extends Card{
                 }
             }
         }
-        if (this.state != CardId.BLOCKED) {
+        if (!this.isShowingBack()) {
 
             //CARD IMAGE
             let size = this.size

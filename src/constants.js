@@ -477,6 +477,8 @@ export const messageDefaultPhase        = ["Select any button to enter in the ph
 
 export const messageDiscardPhase        = ["Select any card to discard", "Aukeratu baztertzeko edozein txartel"];
 
+export const messageEndTurn             = ["End of turn", "Txandaren amaiera"];
+
 export const messageAttackPhase1        = ["Select any attacker minion", "Aukeratu minioi erasotzaile bat"];
 export const messageAttackPhase2        = ["Select any enemy minion to attack", "Aukeratu edozein minioi etsai erasotzeko"];
 
