@@ -1,5 +1,6 @@
 import { CardActions, CardId, IconsPos, BorderId, TurnId, RarityId, IconsId, VFXId, StatsId, DecksId, TypeNames, TurnStates, MessageState, MessageType } from "../../constants.js";
 import Card from "../Card.js";
+import { DeltaPosition, NumberMode, drawCardNumber } from "../cardNumbers.js";
 import Messages from "../../Messages.js";
 export default class Minion extends Card {
 
@@ -260,32 +261,28 @@ export default class Minion extends Card {
                     this.imageAttributes[0],
                     IconsPos.FIRST_ICON_X[size] + xPos, IconsPos.FIRST_ICON_Y[size] + yPos)
 
-                ctx.fillText(defenseRender, IconsPos.FIRST_ICON_NUMBER_X[size] + xPos, IconsPos.FIRST_ICON_NUMBER_Y[size] + yPos);
-                ctx.strokeText(defenseRender, IconsPos.FIRST_ICON_NUMBER_X[size] + xPos, IconsPos.FIRST_ICON_NUMBER_Y[size] + yPos);
+                drawCardNumber(ctx, this, "defense" + size, defenseRender, IconsPos.FIRST_ICON_NUMBER_X[size] + xPos, IconsPos.FIRST_ICON_NUMBER_Y[size] + yPos, NumberMode.STAT, DeltaPosition.ABOVE);
                 
                 color = this.checkIconColor(this.speed, this.previousSpeed)
                 ctx.fillStyle = color
                 ctx.drawImage(
                     this.imageAttributes[1],
                     IconsPos.SECOND_ICON_X[size] + xPos, IconsPos.SECOND_ICON_Y[size] + yPos)
-                ctx.fillText(speedRender, IconsPos.SECOND_ICON_NUMBER_X[size] + xPos, IconsPos.SECOND_ICON_NUMBER_Y[size] + yPos);
-                ctx.strokeText(speedRender, IconsPos.SECOND_ICON_NUMBER_X[size] + xPos, IconsPos.SECOND_ICON_NUMBER_Y[size] + yPos);
+                drawCardNumber(ctx, this, "speed" + size, speedRender, IconsPos.SECOND_ICON_NUMBER_X[size] + xPos, IconsPos.SECOND_ICON_NUMBER_Y[size] + yPos, NumberMode.STAT, DeltaPosition.BELOW);
                 
                 color = this.checkIconColor(this.health, this.previousHealth)
                 ctx.fillStyle = color
                 ctx.drawImage(
                     this.imageAttributes[2],
                     IconsPos.THIRD_ICON_X[size] + xPos, IconsPos.THIRD_ICON_Y[size] + yPos)
-                ctx.fillText(healthRender, IconsPos.THIRD_ICON_NUMBER_X[size] + xPos, IconsPos.THIRD_ICON_NUMBER_Y[size] + yPos);
-                ctx.strokeText(healthRender, IconsPos.THIRD_ICON_NUMBER_X[size] + xPos, IconsPos.THIRD_ICON_NUMBER_Y[size] + yPos);
+                drawCardNumber(ctx, this, "health" + size, healthRender, IconsPos.THIRD_ICON_NUMBER_X[size] + xPos, IconsPos.THIRD_ICON_NUMBER_Y[size] + yPos, NumberMode.STAT, DeltaPosition.ABOVE);
                 
                 color = this.checkIconColor(attackRender, this.previousAttack)
                 ctx.fillStyle = color
                 ctx.drawImage(
                     this.imageAttributes[3],
                     IconsPos.FOURTH_ICON_X[size] + xPos, IconsPos.FOURTH_ICON_Y[size] + yPos)
-                ctx.fillText(attackRender, IconsPos.FOURTH_ICON_NUMBER_X[size] + xPos, IconsPos.FOURTH_ICON_NUMBER_Y[size] + yPos);
-                ctx.strokeText(attackRender, IconsPos.FOURTH_ICON_NUMBER_X[size] + xPos, IconsPos.FOURTH_ICON_NUMBER_Y[size] + yPos);
+                drawCardNumber(ctx, this, "attack" + size, attackRender, IconsPos.FOURTH_ICON_NUMBER_X[size] + xPos, IconsPos.FOURTH_ICON_NUMBER_Y[size] + yPos, NumberMode.STAT, DeltaPosition.BELOW);
                 ctx.fillStyle = "#black"    
             
             

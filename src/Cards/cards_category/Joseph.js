@@ -2,6 +2,7 @@ import EventContainer from "../../Events/EventContainer.js";
 import { DestroyAllMinionsEvent } from "../../Events/phase_events/DestroyAllMinionsEvent.js";
 import { BorderId, CardActions, CardId, DecksId, IconsPos, TurnStates, VFXId, MessageState, MessageType } from "../../constants.js";
 import Card from "../Card.js";
+import { DeltaPosition, NumberMode, drawCardNumber } from "../cardNumbers.js";
 import Messages from "../../Messages.js";
 export default class Joseph extends Card{
 
@@ -269,8 +270,7 @@ export default class Joseph extends Card{
 
                 ctx.font = "bold 40px LongaIberica-DEMO";
                 ctx.fillStyle = "white"
-                ctx.fillText(Math.ceil(this.durability),   xPos + IconsPos.JOSEPH_X , yPos + IconsPos.JOSEPH_Y);
-                ctx.strokeText(Math.ceil(this.durability), xPos + IconsPos.JOSEPH_X , yPos + IconsPos.JOSEPH_Y);
+                drawCardNumber(ctx, this, "durability", Math.ceil(this.durability), xPos + IconsPos.JOSEPH_X, yPos + IconsPos.JOSEPH_Y, NumberMode.COUNTER, DeltaPosition.RIGHT);
                 ctx.font = "25px LongaIberica-DEMO";
                 ctx.fillStyle = "black"
             }

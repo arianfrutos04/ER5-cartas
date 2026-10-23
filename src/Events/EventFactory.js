@@ -100,33 +100,6 @@ export default class EventFactory {
                         break;
                 }
             }
-            const hpDif = objectiveMinion.previousHealth - objectiveMinion.health
-            const defDif = objectiveMinion.previousDefense - objectiveMinion.defense
-            const attDif = objectiveMinion.previousAttack - objectiveMinion.attack
-            const spdDif = objectiveMinion.previousSpeed - objectiveMinion.previousSpeed
-
-            const xPosATT = objectiveMinion.xPos + IconsPos.FOURTH_ICON_NUMBER_X[1]
-            const yPosATT = objectiveMinion.yPos + IconsPos.FOURTH_ICON_NUMBER_Y[1]
-
-            const xPosDEF = objectiveMinion.xPos + IconsPos.FIRST_ICON_NUMBER_X[1]
-            const yPosDEF = objectiveMinion.yPos + IconsPos.FIRST_ICON_NUMBER_Y[1]
-
-            const xPosSPD = objectiveMinion.xPos + IconsPos.SECOND_ICON_NUMBER_X[1]
-            const yPosSPD = objectiveMinion.yPos + IconsPos.SECOND_ICON_NUMBER_Y[1]
-
-            const xPosHP = objectiveMinion.xPos + IconsPos.THIRD_ICON_NUMBER_X[1]
-            const yPosHP = objectiveMinion.yPos + IconsPos.THIRD_ICON_NUMBER_Y[1]
-
-            const stats = [hpDif, defDif, attDif, spdDif]
-            const xPos = [xPosHP, xPosDEF, xPosATT, xPosSPD]
-            const yPos = [yPosHP, yPosDEF, yPosATT, yPosSPD]
-            for (let k = 0; k < stats.length; k++) {
-                if (stats[k] != 0) {
-                    const color = stats[k] < 0 ? "green" : "red"
-                    const message = new Messages(xPos[k], yPos[k] , stats[k], MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.8, 28, color);
-                    messagesContainer.addMessage(message)
-                }
-            }
             return result;
         }
     }

@@ -61,27 +61,34 @@ export class AttackEvent extends Event{
 
         soundManager.currentSound = sound
         this.damageDone += damage;
-        damageRender = damageRender.map((text) => -damage + text)
-        if(this.objectiveMinion.health <= 0){
-            damageRender = CombatText.DEAD
+        // El dano va delante del texto ("-2", "-5 CRITICAL"); el fallo no lleva numero y el golpe que no hace dano muestra "0"
+        const isBlunt = fail && !critic;
+        damageRender = damageRender.map((text) => isBlunt ? text : ((damage > 0 ? "-" + damage : "0") + " " + text).trim())
+        if (damage === 0 && !critic){
+            color = "white"
         }
         
         if (this.attackerMinion.weapon != undefined && this.attackerMinion.weapon.durability <= 0){
             
-            attackerWeapon = new Messages(this.attackerMinion.xPos, this.attackerMinion.yPos + 155, CombatText.WEAPON_BROKEN, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
+            attackerWeapon = Messages.createAfterHitMessage(this.attackerMinion, CombatText.WEAPON_BROKEN);
         }
-        if (this.objectiveMinion.weapon != undefined && this.objectiveMinion.weapon.durability <= 0){
+        // Si el golpe mata al esbirro solo sale DEAD; su equipo roto ya no importa
+        const isObjectiveAlive = this.objectiveMinion.health > 0;
 
-            objectiveWeapon = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos + 155, CombatText.WEAPON_BROKEN, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
+        if (isObjectiveAlive && this.objectiveMinion.weapon != undefined && this.objectiveMinion.weapon.durability <= 0){
+
+            objectiveWeapon = Messages.createAfterHitMessage(this.objectiveMinion, CombatText.WEAPON_BROKEN);
         }
-        if (this.objectiveMinion.armor != undefined && this.objectiveMinion.armor.durability <= 0){
+        if (isObjectiveAlive && this.objectiveMinion.armor != undefined && this.objectiveMinion.armor.durability <= 0){
 
-            objectiveArmor = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos + 155, CombatText.ARMOR_BROKEN, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
+            objectiveArmor = Messages.createAfterHitMessage(this.objectiveMinion, CombatText.ARMOR_BROKEN);
         }
 
         const doneDamage = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos, damageRender, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, size, color);
 
-        const messages = [doneDamage, attackerWeapon, objectiveWeapon, objectiveArmor];
+        const deathMessage = isObjectiveAlive ? undefined : Messages.createAfterHitMessage(this.objectiveMinion, CombatText.DEAD);
+
+        const messages = [doneDamage, deathMessage, attackerWeapon, objectiveWeapon, objectiveArmor];
 
         for (let i = 0; i < messages.length; i++){
 
@@ -101,11 +108,6 @@ export class AttackEvent extends Event{
             defense += enemyArmor.defense
             enemyArmor.durability--
             
-            if(messagesContainer !== undefined){
-                const message = new Messages(enemyArmor.xPos, enemyArmor.yPos, "-1", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
-                messagesContainer.addMessage(message);
-            }
-            
         }
 
         let damage = this.attackerMinion.attack - defense;
@@ -124,9 +126,6 @@ export class AttackEvent extends Event{
         if (enemyArmor != undefined) {
             defense += enemyArmor.defense
             enemyArmor.durability--
-
-            const message = new Messages(enemyArmor.xPos, enemyArmor.yPos, "-1", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
-            messagesContainer.addMessage(message);
         }
 
         let damage = this.attackerMinion.attack + this.attackerMinion.weapon.attack - defense;
@@ -134,8 +133,6 @@ export class AttackEvent extends Event{
             damage = 0
         }
         attackerWeapon.durability--
-        const message = new Messages(attackerWeapon.xPos, attackerWeapon.yPos, "-1", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
-        messagesContainer.addMessage(message);
       
         return damage;
     }
@@ -178,8 +175,6 @@ export class AttackEvent extends Event{
                 }
 
                 enemyWeapon.durability -= defense;
-                const message = new Messages(enemyWeapon.xPos, enemyWeapon.yPos, defense, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
-                messagesContainer.addMessage(message);
 
                 const damageRender = CombatText.BLOCKED
                 const doneDamage = new Messages(this.objectiveMinion.xPos, this.objectiveMinion.yPos, damageRender, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3);

@@ -1,5 +1,6 @@
 import { CardId, DecksId, TypeId } from "../constants.js";
 import CardFactory from "./CardFactory.js";
+import { resetCardNumbers } from "./cardNumbers.js";
 import Messages from "../Messages.js";
 import { MessageType, MessageState } from "../constants.js";
 
@@ -109,7 +110,9 @@ export default class Deck {
 
             const health  = minion.previousHealth - minion.health;
 
+            // El restablecimiento coincide con el cambio de turno y no se anima en los numeros
             minion.restoreMinionsStats();
+            resetCardNumbers(minion);
             let minionYPos =  minion.yPos;
             let yPosMessage  =  minion.yPos < 364 ? minionYPos += 400 :
                                 minion.yPos > 525 ? minionYPos -= 400 :
