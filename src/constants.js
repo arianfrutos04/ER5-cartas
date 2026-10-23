@@ -395,7 +395,7 @@ export const CombatText = {
     DEAD:           ["DEAD", "HILDA"],
     WEAPON_BROKEN:  ["WEAPON BROKEN", "ARMA HAUTSITA"],
     ARMOR_BROKEN:   ["ARMOR BROKEN", "ARMADURA HAUTSITA"],
-    CRITICAL:       ["!! CRITICAL", "!! KRITIKOA"],
+    CRITICAL:       ["CRITICAL", "KRITIKOA"],
     BLUNT:          ["BLUNT", "HUTS EGIN"],
     BLOCKED:        ["BLOCKED", "BLOKEATUTA"],
     BLOCK_BLUNT:    ["BLOCK BLUNT ", "BLOKEO HUTSA "],

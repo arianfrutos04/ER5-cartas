@@ -1,5 +1,22 @@
 import globals from "./globals.js";
-import { IconsPos, MessageState, MessageType } from "./constants.js";
+import { BoardCardSizes, CombatText, IconsPos, MessageState, MessageType } from "./constants.js";
+
+// Colores de los textos flotantes: los nombres que usa el juego pasan a tonos mas ricos
+const DAMAGE_COLORS = {
+    red:        "#ff4b3a",
+    orange:     "#ffc23c",
+    white:      "#efe6d2",
+    "#04ff00":  "#6ee87a",
+};
+const BLOCKED_COLOR = "#a9d4ff";
+const DAMAGE_OUTLINE = "rgba(18, 8, 3, 0.92)";
+
+// Todos los numeros tienen un tamano y todas las palabras otro; solo el critico y DEAD salen mas grandes.
+// Las frases que no caben en el ancho maximo se parten en dos lineas
+const DAMAGE_NUMBER_SIZE = 44;
+const DAMAGE_WORD_SIZE = 26;
+const DAMAGE_EMPHASIS_SCALE = 1.3;
+const DAMAGE_LABEL_MAX_WIDTH = 230;
 
 export default class Messages{
 
@@ -19,9 +36,26 @@ export default class Messages{
         this.onCounter      = 0;
         this.size           = size;
         this.color          = color;
+        this.delay          = 0;                // Segundos que espera antes de empezar a aparecer
+    }
+
+    // DEAD, arma rota y armadura rota salen aparte y un momento despues del golpe, sobre el retrato del esbirro
+    static createAfterHitMessage(minion, text){
+
+        const message = new Messages(minion.xPos, minion.yPos + 85, text, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.3, 0.2, 0.6, 80, "red");
+        message.delay = 0.4;
+
+        return message;
     }
 
     update(messages){
+
+        if (this.delay > 0){
+
+            this.delay -= globals.deltaTime;
+            return;
+        }
+
         switch (this.state){
 
             case MessageState.APPEAR:
@@ -68,7 +102,7 @@ export default class Messages{
 
                 if (this.type != MessageType.HELP_MESSAGE){
 
-                    messages.splice(this, 1);
+                    messages.splice(messages.indexOf(this), 1);
                 }
 
                 else{
@@ -125,14 +159,127 @@ export default class Messages{
         return Array.isArray(this.message) ? this.message[language] : this.message;
     }
 
+    // Centrado sobre el esbirro: el numero arriba y la palabra debajo; al aparecer rebota
     renderDamageMessage(ctx, language){
 
-        ctx.font = this.size + "px LongaIberica-DEMO";
-        ctx.fillStyle = this.color;
-        ctx.globalAlpha = this.alpha;
-        ctx.fillText(this.getText(language), this.xPos, this.yPos);
-        ctx.globalAlpha = 1.0;
+        const text = String(this.getText(language)).trim();
+        const alpha = Math.min(1, Math.max(0, this.alpha));
+        const color = text === CombatText.BLOCKED[language] ? BLOCKED_COLOR : DAMAGE_COLORS[this.color] ?? this.color;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.textBaseline = "alphabetic";
+        ctx.lineJoin = "round";
+
+
+        const number = text.match(/([-+]\s?)?\d+(\(\d+\))?/);
+        const label = number ? text.replace(number[0], "").trim() : text;
+        const appear = this.state === MessageState.APPEAR ? alpha : 1;
+        const scale = 0.5 + 0.5 * appear + 0.35 * Math.sin(appear * Math.PI);
+        const isCritical = this.color === "orange";
+        const emphasis = isCritical || text === CombatText.DEAD[language] ? DAMAGE_EMPHASIS_SCALE : 1;
+
+        ctx.textAlign = "center";
+        ctx.translate(this.xPos + BoardCardSizes.X_SIZE / 2, this.yPos + 30);
+        ctx.scale(scale * emphasis, scale * emphasis);
+
+        // El critico sale algo inclinado
+        if (isCritical){
+
+            ctx.rotate(-0.08);
+        }
+
+        let wordYPos = 0;
+
+        if (number){
+
+            this.renderDamageText(ctx, number[0].replace(" ", ""), DAMAGE_NUMBER_SIZE, 0, color);
+            wordYPos = DAMAGE_NUMBER_SIZE * 0.3 + DAMAGE_WORD_SIZE;
+        }
+
+        if (label !== ""){
+
+            const lines = this.splitDamageLabel(ctx, label);
+
+            for (let i = 0; i < lines.length; i++){
+
+                this.renderDamageText(ctx, lines[i], DAMAGE_WORD_SIZE, wordYPos + i * DAMAGE_WORD_SIZE * 1.15, color);
+            }
+        }
+
+        ctx.restore();
     }
+
+    // Las frases que no caben se parten por el espacio mas cercano al centro
+    splitDamageLabel(ctx, label){
+
+        ctx.font = "700 " + DAMAGE_WORD_SIZE + "px Cinzel";
+        ctx.letterSpacing = "2px";
+
+        const words = label.split(" ");
+
+        if (words.length < 2 || ctx.measureText(label).width <= DAMAGE_LABEL_MAX_WIDTH){
+
+            return [label];
+        }
+
+        let best = 1;
+
+        for (let i = 1; i < words.length; i++){
+
+            const difference = Math.abs(words.slice(0, i).join(" ").length - words.slice(i).join(" ").length);
+
+            if (difference < Math.abs(words.slice(0, best).join(" ").length - words.slice(best).join(" ").length)){
+
+                best = i;
+            }
+        }
+
+        return [words.slice(0, best).join(" "), words.slice(best).join(" ")];
+    }
+
+    // Filo dorado por fuera, contorno oscuro y relleno con la parte de arriba mas clara
+    renderDamageText(ctx, text, size, yPos, color){
+
+        ctx.font = "700 " + Math.round(size) + "px Cinzel";
+        ctx.letterSpacing = "2px";
+
+        // Una palabra suelta que no cabe se encoge hasta caber
+        const width = ctx.measureText(text).width;
+
+        if (width > DAMAGE_LABEL_MAX_WIDTH){
+
+            size = size * DAMAGE_LABEL_MAX_WIDTH / width;
+            ctx.font = "700 " + Math.round(size) + "px Cinzel";
+        }
+
+        const rim = ctx.createLinearGradient(0, yPos - size, 0, yPos);
+        rim.addColorStop(0, "#fff0b8");
+        rim.addColorStop(0.5, "#d9a23c");
+        rim.addColorStop(1, "#7a4a12");
+
+        ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 3;
+        ctx.lineWidth = size / 5 + 5;
+        ctx.strokeStyle = rim;
+        ctx.strokeText(text, 0, yPos);
+
+        ctx.shadowColor = "transparent";
+        ctx.lineWidth = size / 5;
+        ctx.strokeStyle = DAMAGE_OUTLINE;
+        ctx.strokeText(text, 0, yPos);
+
+        const fill = ctx.createLinearGradient(0, yPos - size * 0.75, 0, yPos);
+        fill.addColorStop(0, "#fff8e6");
+        fill.addColorStop(0.5, color);
+        fill.addColorStop(1, color);
+        ctx.fillStyle = fill;
+        ctx.fillText(text, 0, yPos);
+
+        ctx.letterSpacing = "0px";
+    }
+
 
     renderHelpMessage(ctx, text, yOffset){
 

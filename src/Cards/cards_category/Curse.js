@@ -2,6 +2,7 @@ import Messages from "../../Messages.js";
 import { BorderId, CardActions, CardId, CurseId, DecksId, DurabilityColors, IconsPos, MessageState, MessageType, ScreenSize, TurnStates, TypeNames, VFXId } from "../../constants.js";
 import Card from "../Card.js";
 import { drawEventSlotImage, eventFade, eventReadyGlow, eventSelectGlow } from "../eventSlotStyle.js";
+import { NumberMode, drawCardNumber } from "../cardNumbers.js";
 
 export default class Curse extends Card{
 
@@ -84,21 +85,6 @@ export default class Curse extends Card{
                     break;
             }
         } 
-
-        if (messagesContainer != undefined){
-
-            if (this.cooldown < this.previousCooldown && this.action === CardActions.COOLDOWN && this.cooldown === Math.floor(this.cooldown)){
-
-                const message = new Messages(this.xPos, this.yPos, "-1", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
-                messagesContainer.addMessage(message);
-            }
-    
-            if (this.durability < this.previousDurability && this.durability != null && this.durability === Math.floor(this.durability)){
-    
-                const message = new Messages(this.xPos, this.yPos, "-1", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
-                messagesContainer.addMessage(message);
-            }
-        }
 
         this.previousState = this.state
         this.curseLogic()
@@ -335,8 +321,7 @@ export default class Curse extends Card{
                             ctx.fillStyle = color
                             ctx.font = "bold 24px LongaIberica-DEMO";
 
-                            ctx.fillText(Math.ceil(cooldownRender), xPos + IconsPos.EVENT_CD_X, yPos + IconsPos.EVENT_CD_Y);
-                            ctx.strokeText(Math.ceil(cooldownRender), IconsPos.EVENT_CD_X + xPos, IconsPos.EVENT_CD_Y + yPos);
+                            drawCardNumber(ctx, this, "cooldown", Math.ceil(cooldownRender), xPos + IconsPos.EVENT_CD_X, yPos + IconsPos.EVENT_CD_Y, NumberMode.COUNTER);
                             ctx.drawImage(
                                 this.imageAttributes[0],
                                 IconsPos.EVENT_CD_IMAGE_X + xPos, IconsPos.EVENT_CD_IMAGE_Y + yPos);
@@ -355,8 +340,7 @@ export default class Curse extends Card{
 
                             if (this.durability != null){
 
-                                ctx.fillText(Math.ceil(durabilityRender), xPos + IconsPos.EVENT_CD_X, yPos + IconsPos.EVENT_CD_Y);
-                                ctx.strokeText(Math.ceil(durabilityRender), IconsPos.EVENT_CD_X + xPos, IconsPos.EVENT_CD_Y + yPos);
+                                drawCardNumber(ctx, this, "durability", Math.ceil(durabilityRender), xPos + IconsPos.EVENT_CD_X, yPos + IconsPos.EVENT_CD_Y, NumberMode.STAT);
                             }
                             
                             else{

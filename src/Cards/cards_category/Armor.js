@@ -2,6 +2,7 @@ import Messages from "../../Messages.js";
 import { BorderId, CardActions, CardId, IconsPos, IconsId, VFXId, StatsId, DecksId, DurabilityColors, TypeNames, MessageType, MessageState, TurnStates, ScreenSize} from "../../constants.js";
 import Card from "../Card.js";
 import { drawEventSlotImage, eventFade, eventReadyGlow, eventSelectGlow } from "../eventSlotStyle.js";
+import { NumberMode, drawCardNumber } from "../cardNumbers.js";
 
 export default class Armor extends Card{
     constructor(id, texts, image, rarity, category, type, xPos, yPos, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse,imageVFX, health, attack, defense, speed, durability, cooldown, toolTip){
@@ -86,15 +87,6 @@ export default class Armor extends Card{
                     break;
             }
         } 
-
-        if (messagesContainer != undefined){
-
-            if (this.cooldown < this.previousCooldown && this.action === CardActions.COOLDOWN && this.cooldown === Math.floor(this.cooldown)){
-
-                const message = new Messages(this.xPos, this.yPos, "-1", MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, 50, "red");
-                messagesContainer.addMessage(message);
-            }
-        }
 
         this.previousState = this.state
         this.armorLogic();
@@ -313,8 +305,7 @@ export default class Armor extends Card{
                                 let color = "white"
                                 ctx.fillStyle = color
                                 ctx.font = "bold 24px LongaIberica-DEMO";
-                                ctx.fillText(Math.ceil(cooldownRender), xPos + IconsPos.EVENT_CD_X, yPos + IconsPos.EVENT_CD_Y);
-                                ctx.strokeText(Math.ceil(cooldownRender), IconsPos.EVENT_CD_X + xPos, IconsPos.EVENT_CD_Y + yPos);
+                                drawCardNumber(ctx, this, "cooldown", Math.ceil(cooldownRender), xPos + IconsPos.EVENT_CD_X, yPos + IconsPos.EVENT_CD_Y, NumberMode.COUNTER);
                                     ctx.drawImage(
                                     this.imageAttributes[0],
                                     IconsPos.EVENT_CD_IMAGE_X + xPos, IconsPos.EVENT_CD_IMAGE_Y + yPos);
@@ -329,8 +320,7 @@ export default class Armor extends Card{
                                 let color = "white"
                                 ctx.fillStyle = color
                                 ctx.font = "bold 24px LongaIberica-DEMO";
-                                ctx.fillText(Math.ceil(durabilityRender), xPos + IconsPos.EVENT_CD_X, yPos + IconsPos.EVENT_CD_Y);
-                                ctx.strokeText(Math.ceil(durabilityRender), IconsPos.EVENT_CD_X + xPos, IconsPos.EVENT_CD_Y + yPos);
+                                drawCardNumber(ctx, this, "durability", Math.ceil(durabilityRender), xPos + IconsPos.EVENT_CD_X, yPos + IconsPos.EVENT_CD_Y, NumberMode.STAT);
                                     ctx.drawImage(
                                     this.imageAttributes[1],
                                     IconsPos.EVENT_CD_IMAGE_X + xPos, IconsPos.EVENT_CD_IMAGE_Y + yPos);

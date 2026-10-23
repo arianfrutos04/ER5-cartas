@@ -52,19 +52,22 @@ export default class BlockEvent extends Event{
         
         if (this.damage === 0) {
             damageRender = CombatText.BLOCKED
-        }else if(this.defenderMinion.health <= 0){
-            damageRender = CombatText.DEAD
-
         }else{
+            // Bloqueo parcial: dano y, entre parentesis, lo bloqueado. Bloqueo fallido: no se bloquea nada
             const damageText = "-" + this.damage + "(" + (initialDmg - this.damage) + ")"
             damageRender = [damageText, damageText]
-            if (BlockStates.FAILED_BLOCK) {
-                damageRender = CombatText.BLOCK_BLUNT.map((text) => text + damageText)
+            if (state === BlockStates.FAILED_BLOCK) {
+                damageRender = CombatText.BLOCK_BLUNT.map((text) => text + "-" + this.damage)
             }
         }
         
         const doneDamage = new Messages(this.defenderMinion.xPos, this.defenderMinion.yPos, damageRender, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.2, 0.3, size, color);
         messagesContainer.addMessage(doneDamage);
+
+        if (this.defenderMinion.health <= 0) {
+
+            messagesContainer.addMessage(Messages.createAfterHitMessage(this.defenderMinion, CombatText.DEAD));
+        }
 
         return this.damage;
     }
