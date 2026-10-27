@@ -18,6 +18,7 @@ import SoundManager from "./SoundManager.js";
 import Menu from "./Menu.js";
 import QuickHelp from "./QuickHelp.js";
 import GameOverScreen from "./GameOverScreen.js";
+import JosephEntrance from "./JosephEntrance.js";
 
 // Al cambiar de turno el cartel entra primero y, con el velo ya oscuro, el tablero cambia de lado: los esbirros y
 // personajes pasan a su nuevo sitio y las manos y los eventos preparados cruzan el tablero hacia el suyo
@@ -40,6 +41,7 @@ export default class Game {
         this.eventContainer = eventContainer;
         this.turnCounter = 0;
         this.flyingDecks = [];
+        this.josephEntrance = undefined;                // Escena de la entrada de Joseph mientras se ve
         this.turnSwapTime = 0;                          // Tiempo que falta para que el tablero cambie de lado
         this.swapPieces = [];                           // Esbirros y personajes que se dan la vuelta al cambiar de lado
         this.swapTime = 0;
@@ -152,19 +154,26 @@ export default class Game {
                 this.soundManager.gameState = this.gameState
                 this.soundManager.playSound()
 
-                // Mientras el turno espera para cerrarse no se amplian cartas ni vuelven los tooltips
-                if (!this.turnContainer.turnContainer[this.currentTurn].isWaitingToEnd()){
+                // Mientras el turno espera para cerrarse o entra Joseph no se amplian cartas ni vuelven los tooltips
+                const isJosephEntering = this.josephEntrance !== undefined;
+
+                if (!this.turnContainer.turnContainer[this.currentTurn].isWaitingToEnd() && !isJosephEntering){
 
                     this.deckContainer.updateScale(this.mouse, this.turnContainer.turnContainer[this.currentTurn].state, this.messagesContainer, this.language);
                 }
 
-                this.turnContainer.buttonContainer.updateButtons(this.mouse, this.turnContainer.turnContainer[this.currentTurn], this.timerContainer.timer[TimerId.TURN_TIMER]);
+                if (!isJosephEntering){
 
-                // Mientras entra el cartel ningun turno avanza
-                if (this.turnSwapTime <= 0){
+                    this.turnContainer.buttonContainer.updateButtons(this.mouse, this.turnContainer.turnContainer[this.currentTurn], this.timerContainer.timer[TimerId.TURN_TIMER]);
+                }
+
+                // Mientras entra el cartel o Joseph ningun turno avanza
+                if (this.turnSwapTime <= 0 && !isJosephEntering){
 
                     this.turnContainer.turnContainer[this.currentTurn].update(this.mouse, this.turnContainer.turnContainer[(this.currentTurn+1)%2].activeMinionDeck, this.messagesContainer, this.timerContainer, this.particlesContainer);
                 }
+
+                this.updateJosephEntrance();
 
                 this.mouse.update();
                 this.particlesContainer.update();
@@ -284,9 +293,20 @@ export default class Game {
         this.menu.render(this.ctx, this.turnContainer.buttonContainer.container[ButttonsId.BTN_RETURN_TO_MENU], this.gameState, this.language);
         this.turnContainer.buttonContainer.renderButtons(this.language, this.gameState === GameState.MENU ? this.menu.previousState : undefined);
         this.turnContainer.render(this.ctx, this.language, this.mouse, this.currentTurn);
+
+        if (this.josephEntrance !== undefined){
+
+            this.josephEntrance.renderBack(this.ctx);
+        }
+
         this.particlesContainer.renderAboveCards(this.ctx);
         // Mientras se ve el cartel de turno, las cartas que cambian de sitio pasan por delante del velo y por detras de la banda
         this.messagesContainer.renderDamageAndChangeTurn(this.ctx, this.language, () => this.renderFlyingCards());
+
+        if (this.josephEntrance !== undefined){
+
+            this.josephEntrance.renderFront(this.ctx, this.language);
+        }
 
         if (this.gameState === GameState.MENU){
 
@@ -574,6 +594,28 @@ export default class Game {
 
             this.swapPieces.forEach((piece) => piece.swapScale = undefined);
             this.swapPieces = [];
+        }
+    }
+
+    // Cuando Joseph se activa empieza su entrada; el lienzo aun tiene el ultimo fotograma, con sus victimas en el tablero
+    updateJosephEntrance(){
+
+        const joseph = this.deckContainer.decks[DecksId.JOSEPH_DECK].cards[0];
+
+        if (joseph !== undefined && joseph.entranceVictims !== undefined){
+
+            this.josephEntrance = new JosephEntrance(joseph, joseph.entranceVictims, this.canvas, this.particlesContainer, this.soundManager, this.messagesContainer);
+            joseph.entranceVictims = undefined;
+        }
+
+        if (this.josephEntrance !== undefined){
+
+            this.josephEntrance.update(globals.deltaTime);
+
+            if (!this.josephEntrance.isPlaying()){
+
+                this.josephEntrance = undefined;
+            }
         }
     }
 

@@ -149,10 +149,17 @@ export default class Deck {
 
         for (let i = 0; i < this.cards.length; i++){
 
+            const cardsBefore = this.cards.length;
             const card = this.cards[i];
-            
+
             card.removeIfWornOut(this, graveyardDeck);
-        }  
+
+            // Si ha salido alguna carta, la siguiente ocupa ahora este hueco y tambien hay que mirarla
+            if (this.cards.length < cardsBefore){
+
+                i--;
+            }
+        }
     }
 
     autoSelectAnyCard(){
