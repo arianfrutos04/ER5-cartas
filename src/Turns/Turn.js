@@ -442,7 +442,8 @@ export default class Turn {
         this.mainCharacter.render(ctx, language, teamColor);
         this.mainCharacter.renderChatBubble(ctx);
 
-        if (this.josephDeck.cards[0]) {
+        // Durante su entrada a Joseph lo pinta la propia escena
+        if (this.josephDeck.cards[0] && !this.josephDeck.cards[0].isEntering) {
             this.josephDeck.cards[0].render(ctx, language, currentTurn)
             this.josephDeck.cards[0].renderChatBubble(ctx)
         }

@@ -1,8 +1,8 @@
 import EventContainer from "../../Events/EventContainer.js";
 import { DestroyAllMinionsEvent } from "../../Events/phase_events/DestroyAllMinionsEvent.js";
-import { BorderId, CardActions, CardId, DecksId, IconsPos, TurnStates, VFXId, MessageState, MessageType } from "../../constants.js";
+import { BoardCardSizes, BorderId, CardActions, CardId, DecksId, IconsPos, TurnStates, VFXId, MessageState, MessageType } from "../../constants.js";
 import Card from "../Card.js";
-import { DeltaPosition, NumberMode, drawCardNumber } from "../cardNumbers.js";
+import { NumberMode, drawCardNumber } from "../cardNumbers.js";
 import Messages from "../../Messages.js";
 export default class Joseph extends Card{
 
@@ -114,6 +114,7 @@ export default class Joseph extends Card{
     josephLogic(mouse){
         switch (this.action) {
             case CardActions.READY:
+                this.entranceVictims = this.getEntranceVictims()
                 this.xPos = 1750
                 this.yPos = 44
                 this.size = CardId.SMALL_SIZE
@@ -140,6 +141,28 @@ export default class Joseph extends Card{
                 break;
         }
     }
+    // Huecos de los esbirros y eventos que va a destruir, para ensenarlos en su entrada
+    getEntranceVictims(){
+
+        const victims = [];
+
+        for (let i = 0; i < this.deckObjetives.length; i++){
+
+            const isEventDeck = i >= 2;
+
+            for (let j = 0; j < this.deckObjetives[i].cards.length; j++){
+
+                const card = this.deckObjetives[i].cards[j];
+                const width = isEventDeck ? Math.ceil(IconsPos.EVENT_FADE_WIDTH) : BoardCardSizes.X_SIZE;
+                const height = isEventDeck ? Math.ceil(IconsPos.EVENT_FADE_HEIGTH) : BoardCardSizes.Y_SIZE;
+
+                victims.push({ xPos: Math.round(card.xPos), yPos: Math.round(card.yPos), width: width, height: height, isEvent: isEventDeck });
+            }
+        }
+
+        return victims;
+    }
+
     setObjetive(decks){
         this.deckObjetives = decks
     }
@@ -270,7 +293,7 @@ export default class Joseph extends Card{
 
                 ctx.font = "bold 40px LongaIberica-DEMO";
                 ctx.fillStyle = "white"
-                drawCardNumber(ctx, this, "durability", Math.ceil(this.durability), xPos + IconsPos.JOSEPH_X, yPos + IconsPos.JOSEPH_Y, NumberMode.COUNTER, DeltaPosition.RIGHT);
+                drawCardNumber(ctx, this, "durability", Math.ceil(this.durability), xPos + IconsPos.JOSEPH_X, yPos + IconsPos.JOSEPH_Y, NumberMode.COUNTER);
                 ctx.font = "25px LongaIberica-DEMO";
                 ctx.fillStyle = "black"
             }

@@ -137,6 +137,29 @@ export default class ParticlesContainer{
         }
     }
 
+    // Brasa que sube y se apaga, de una carta que arde
+    createEmber(xPos, yPos){
+
+        const color = Math.random() < 0.5 ? EMBER : GOLD;
+        this.add(ParticleId.MOTE, xPos, yPos, (Math.random() - 0.5) * 40, -50 - Math.random() * 70, 0.7 + Math.random() * 0.5, 5 + Math.random() * 4, color, { drag: 0.8 });
+    }
+
+    // Joseph se descubre: fogonazo, anillo y chispas doradas
+    createJosephReveal(xPos, yPos){
+
+        this.add(ParticleId.FLASH, xPos, yPos, 0, 0, 0.4, 260, GOLD);
+        this.add(ParticleId.RING, xPos, yPos, 0, 0, 0.7, 60, GOLD, { growth: 520 });
+        this.createBurst(xPos, yPos, 40, GOLD, 650, 3.5);
+        this.createBurst(xPos, yPos, 16, EMBER, 420, 3);
+    }
+
+    // Joseph llega a su sitio
+    createJosephLanding(xPos, yPos){
+
+        this.add(ParticleId.RING, xPos, yPos, 0, 0, 0.6, 30, GOLD, { growth: 160 });
+        this.createBurst(xPos, yPos, 12, GOLD, 260, 2.6);
+    }
+
     // Chispas en todas direcciones con un poco de gravedad
     createBurst(xPos, yPos, count, color, maxSpeed, size, gravity = 420){
 

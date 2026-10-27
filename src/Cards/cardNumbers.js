@@ -11,7 +11,6 @@ export const NumberMode = {
 export const DeltaPosition = {
     ABOVE:      0,
     BELOW:      1,
-    RIGHT:      2,
 };
 
 const ROLL_TIME         = 0.3;
@@ -109,21 +108,19 @@ export function drawCardNumber(ctx, card, key, value, xPos, yPos, mode = NumberM
     const deltaAlpha = time < ROLL_TIME ? roll : Math.max(0, 1 - (time - DELTA_FADE_START) / (HIGHLIGHT_TIME - DELTA_FADE_START));
     const deltaText = (change > 0 ? "+" : "-") + Math.abs(change);
     const drift = time * 6;
-    const isBeside = deltaPosition === DeltaPosition.RIGHT;
-    const deltaX = isBeside ? xPos + fontSize * 1.15 : xPos;
-    const deltaY = deltaPosition === DeltaPosition.BELOW ? yPos + fontSize * 1.1 + drift : yPos - (isBeside ? fontSize * 0.6 : fontSize * 1.1) - drift;
+    const deltaY = deltaPosition === DeltaPosition.BELOW ? yPos + fontSize * 1.1 + drift : yPos - fontSize * 1.1 - drift;
 
     ctx.globalAlpha = deltaAlpha;
     ctx.font = "bold " + fontSize + "px LongaIberica-DEMO";
 
-    // Encima o debajo del numero lo que se centra es la cifra; el signo sobresale a la izquierda
-    const signOffset = isBeside ? 0 : ctx.measureText(deltaText.charAt(0)).width / 2;
+    // Lo que se centra es la cifra; el signo sobresale a la izquierda
+    const signOffset = ctx.measureText(deltaText.charAt(0)).width / 2;
     ctx.lineWidth = 3;
     ctx.lineJoin = "round";
     ctx.strokeStyle = "rgba(18, 8, 3, 0.9)";
-    ctx.strokeText(deltaText, deltaX - signOffset, deltaY);
+    ctx.strokeText(deltaText, xPos - signOffset, deltaY);
     ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-    ctx.fillText(deltaText, deltaX - signOffset, deltaY);
+    ctx.fillText(deltaText, xPos - signOffset, deltaY);
 
     ctx.restore();
 }
