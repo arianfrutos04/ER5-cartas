@@ -373,6 +373,14 @@ export const TooltipText = {
     NAME:   ["Name: ", "Izena: "],
     TYPE:   ["Type:", "Mota:"],
     RANGE:  ["Range:", "Irismena:"],
+    TURNS_LEFT: ["Turns left: ", "Geratzen diren txandak: "],
+    ATTACK:     ["Attack", "Erasoa"],
+    DEFENSE:    ["Defense", "Defentsa"],
+    HEALTH:     ["Health", "Osasuna"],
+    SPEED:      ["Speed", "Abiadura"],
+    CRITICAL:   ["Critical hit chance: ", "Kolpe kritikoaren aukera: "],
+    MISS:       ["Miss chance: ", "Huts-aukera: "],
+    STUNNED:    ["Cannot take any action", "Ezin du ekintzarik egin"],
 }
 
 export const ReturnToMenuText = {

@@ -1,5 +1,6 @@
 import Turn from "./Turn.js";
 import { CardId, CardImageId, DecksId, IconsPos, TurnId } from "../constants.js";
+import { renderMinionEffectTooltip } from "../Cards/minionEffects.js";
 
 export default class TurnContainer {
 
@@ -72,6 +73,15 @@ export default class TurnContainer {
         const enemyTurn = this.turnContainer[pos]
         turn.render(ctx, language, currentTurn, xPos, yPos, mouse, currentTurn)
         enemyTurn.render(ctx, language, pos, enemyXpos, enemyYpos, mouse, currentTurn)
+
+        // El recuadro de los medallones de los esbirros va por encima de los dos jugadores, salvo con una carta ampliada
+        const minionDecks = [turn.activeMinionDeck, enemyTurn.activeMinionDeck];
+        const decks = [...minionDecks, turn.handDeck, enemyTurn.handDeck, turn.preparingEventDeck, enemyTurn.preparingEventDeck];
+
+        if (!turn.activeMinionDeck.isAnyCard(decks, CardId.SCALED)[0]){
+
+            renderMinionEffectTooltip(ctx, this.eventContainer, minionDecks, mouse, language);
+        }
     }
 
     

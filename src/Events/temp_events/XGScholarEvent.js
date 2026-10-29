@@ -15,11 +15,11 @@ export default class XGScholarEvent extends Event {
 
         switch (this.attribute){
             case "Attack":
-                this.objectiveMinion.attack += this.value;
+                this.objectiveMinion.changeStat("attack", this.value);
                 break;
 
             case "Health":
-                this.objectiveMinion.health += this.value;
+                this.objectiveMinion.changeStat("health", this.value);
                 break;
 
         }

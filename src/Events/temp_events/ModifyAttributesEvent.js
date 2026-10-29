@@ -26,45 +26,17 @@ export class ModifyAttributeEvent extends Event{
 
             switch (this.attribute){
                 case "Attack":
-                    if (this.value === 0){
-                        this.objetive.attack = this.value;
-                    }
-                    else{
-                        this.objetive.attack = Math.ceil(this.modifyTheStat(this.objetive.attack, this.value));
-                    }
-                    if (this.objetive.attack < 0){
-                        this.objetive.attack = 0;
-                    }
+                    this.modifyMinionStat("attack");
                     break;
                 case "Defense":
-                    if (this.value === 0){
-                        this.objetive.defense = this.value;
-                    }
-                    else{
-                        this.objetive.defense = Math.ceil(this.modifyTheStat(this.objetive.defense, this.value));
-                    }
+                    this.modifyMinionStat("defense");
                     break;
                 case "Health":
-                    if (this.value === 0){
-                        this.objetive.health = this.value;
-                    }
-                    else{
-                        this.objetive.health = Math.ceil(this.modifyTheStat(this.objetive.health, this.value));
-                    }
-                    if (this.objetive.health < 1){
-                        this.objetive.health = 1;
-                    }
+                    this.modifyMinionStat("health");
                     break;
                 case "Speed":
-                    if (this.value === 0){
-                        this.objetive.speed = this.value;
-                    }
-                    else{
-                        this.objetive.speed = Math.ceil(this.modifyTheStat(this.objetive.speed, this.value));
-                    }
-                    if (this.objetive.speed < 0){
-                        this.objetive.speed = 0;
-                    }
+                    this.modifyMinionStat("speed");
+                    break;
                 case "Critic_modifier":
                     this.objetive.criticModifier = this.modifyTheStat(this.objetive.criticModifier, this.value);
                     break;
@@ -85,6 +57,14 @@ export class ModifyAttributeEvent extends Event{
             this.card.action = CardActions.WORN_OUT;
             return true;
         }
+    }
+
+    // Con valor 0 la estadistica se queda a 0; si no, se le aplica la operacion. El minimo lo pone el esbirro
+    modifyMinionStat(stat){
+
+        const value = this.value === 0 ? 0 : Math.ceil(this.modifyTheStat(this.objetive.getRawStat(stat), this.value));
+
+        this.objetive.setRawStat(stat, value);
     }
 
     modifyTheStat(stat, value){

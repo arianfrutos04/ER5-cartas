@@ -1,10 +1,14 @@
 import Messages from "../Messages.js"
-import { IconsPos, MessageState, MessageType } from "../constants.js"
+import { IconsPos, MainCharacterId, MessageState, MessageType, TypeId } from "../constants.js"
 import EventFactory from "./EventFactory.js"
+import { ModifyAttributeEvent } from "./temp_events/ModifyAttributesEvent.js"
+import { ModifyAttributeToAllMinions } from "./temp_events/ModifyAttributeToAllMinions.js"
+import HeroEvents from "./temp_events/HeroEvents.js"
 
 export default class EventContainer {
     constructor() {
         this.events = []
+        this.areEffectsApplied = true       // Falso desde que se restablecen las estadisticas al acabar un turno hasta que el siguiente vuelve a aplicar los efectos
     }
 
     createCooldownEvent(card){
@@ -43,6 +47,86 @@ export default class EventContainer {
         return false;
     }
 
+    // Mejoras y maldiciones que tiene ahora un esbirro, una por carta (o heroe): la carta, si le beneficia y los turnos
+    // que le quedan a cada copia (null si es permanente)
+    getMinionEffects(minion){
+
+        const effects = []
+        const timers = []
+
+        for (let i = 0; i < this.events.length; i++){
+
+            const effect = this.getMinionEffect(this.events[i], minion)
+
+            // Una carta con varios efectos tiene un evento por efecto, pero se cuenta una sola vez
+            if (effect === undefined || timers.includes(effect.timer)){
+
+                continue
+            }
+
+            timers.push(effect.timer)
+
+            const turns = effect.timer.durability === null ? null : Math.ceil(effect.timer.durability)
+            const stacked = effects.find((other) => other.card.id === effect.card.id)
+
+            if (stacked !== undefined){
+
+                stacked.turns.push(turns)
+            }
+
+            else{
+
+                effects.push({ card: effect.card, isBuff: effect.isBuff, turns: [turns] })
+            }
+        }
+
+        return effects
+    }
+
+    // La carta que afecta al esbirro con este evento, la que lleva la cuenta de sus turnos y si le beneficia; nada si
+    // el evento no le afecta o ya se ha acabado
+    getMinionEffect(event, minion){
+
+        let effect
+
+        if (event instanceof ModifyAttributeEvent && event.objetive === minion){
+
+            effect = { card: event.card, timer: event.card, isBuff: event.card.category === TypeId.BUFF }
+        }
+
+        else if (event instanceof ModifyAttributeToAllMinions && event.decks.some((deck) => deck.cards.includes(minion))){
+
+            effect = { card: event.card, timer: event.card, isBuff: false }
+        }
+
+        // La habilidad del heroe la activa una carta, que es la que lleva la cuenta de los turnos
+        else if (event instanceof HeroEvents && this.isHeroTarget(event, minion)){
+
+            effect = { card: event.hero, timer: event.card, isBuff: event.hero.id === MainCharacterId.X_G_SCHOLAR }
+        }
+
+        if (effect === undefined || effect.timer === undefined || (effect.timer.durability !== null && effect.timer.durability <= 0)){
+
+            return undefined
+        }
+
+        return effect
+    }
+
+    isHeroTarget(event, minion){
+
+        switch (event.hero.id){
+            case MainCharacterId.LUCRETIA:
+                return event.enemyActiveMinionDeck.cards.includes(minion)
+            case MainCharacterId.X_G_SCHOLAR:
+                return event.activeMinionDeck.cards.includes(minion)
+            case MainCharacterId.DECREPIT_TRHONE:
+                return event.minion === minion
+            default:
+                return false
+        }
+    }
+
     createJosephEvents(decks, josephCard, mouse){
         this.events = []
         const minionDecks = [decks[0],decks[1]]
@@ -60,6 +144,7 @@ export default class EventContainer {
     }
 
     executeEvents(messagesContainer,decks){
+        this.areEffectsApplied = true
         for (let i = 0; i < this.events.length; i++) {
             const event = this.events[i];
             if (event != undefined){

@@ -19,8 +19,8 @@ export default class DecrepitThroneEvent extends Event{
         this.enemyActiveMinionDeck.cards.splice(index, 1);
 
         // Apply the effect
-        this.minion.attack += 3;
-        this.minion.speed  += 1;
+        this.minion.changeStat("attack", 3);
+        this.minion.changeStat("speed", 1);
         
         // Push the card to activeMinionDeck
         this.activeMinionDeck.cards.push(this.minion);
