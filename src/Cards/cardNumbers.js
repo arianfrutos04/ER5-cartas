@@ -22,6 +22,26 @@ const UP_COLOR          = [120, 235, 120];
 const DOWN_COLOR        = [255, 85, 60];
 const COUNTER_COLOR     = [255, 205, 95];
 
+// Mientras se pintan los esbirros del tablero las diferencias se guardan para pintarlas despues, por encima de sus
+// medallones; fuera de eso se pintan en el momento
+let pendingDeltas = undefined;
+
+export function deferCardDeltas(){
+
+    pendingDeltas = [];
+}
+
+export function drawDeferredCardDeltas(ctx){
+
+    const deltas = pendingDeltas ?? [];
+    pendingDeltas = undefined;
+
+    for (let i = 0; i < deltas.length; i++){
+
+        drawDelta(ctx, deltas[i]);
+    }
+}
+
 // Olvida los valores anteriores para que el siguiente cambio no se anime, como al restablecer las estadisticas al cambiar de turno
 export function resetCardNumbers(card){
 
@@ -109,18 +129,41 @@ export function drawCardNumber(ctx, card, key, value, xPos, yPos, mode = NumberM
     const deltaText = (change > 0 ? "+" : "-") + Math.abs(change);
     const drift = time * 6;
     const deltaY = deltaPosition === DeltaPosition.BELOW ? yPos + fontSize * 1.1 + drift : yPos - fontSize * 1.1 - drift;
+    const delta = { text: deltaText, xPos: xPos, yPos: deltaY, alpha: deltaAlpha, fontSize: fontSize, color: [red, green, blue], transform: ctx.getTransform() };
 
-    ctx.globalAlpha = deltaAlpha;
-    ctx.font = "bold " + fontSize + "px LongaIberica-DEMO";
+    ctx.restore();
+
+    if (pendingDeltas !== undefined){
+
+        pendingDeltas.push(delta);
+    }
+
+    else{
+
+        drawDelta(ctx, delta);
+    }
+}
+
+// Con el desplazamiento que tenia la carta al pintar su numero
+function drawDelta(ctx, delta){
+
+    const [red, green, blue] = delta.color;
+
+    ctx.save();
+    ctx.setTransform(delta.transform);
+    ctx.globalAlpha = delta.alpha;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "bold " + delta.fontSize + "px LongaIberica-DEMO";
 
     // Lo que se centra es la cifra; el signo sobresale a la izquierda
-    const signOffset = ctx.measureText(deltaText.charAt(0)).width / 2;
+    const signOffset = ctx.measureText(delta.text.charAt(0)).width / 2;
     ctx.lineWidth = 3;
     ctx.lineJoin = "round";
     ctx.strokeStyle = "rgba(18, 8, 3, 0.9)";
-    ctx.strokeText(deltaText, xPos - signOffset, deltaY);
+    ctx.strokeText(delta.text, delta.xPos - signOffset, delta.yPos);
     ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-    ctx.fillText(deltaText, xPos - signOffset, deltaY);
+    ctx.fillText(delta.text, delta.xPos - signOffset, delta.yPos);
 
     ctx.restore();
 }

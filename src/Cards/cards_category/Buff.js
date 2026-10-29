@@ -107,8 +107,9 @@ export default class Buff extends Card {
 
                 break;
             
+            // Las permanentes (sin durabilidad) no se gastan y se quedan en el grid, como las maldiciones permanentes
             case CardActions.ON_USE:
-                if (this.durability <= 0) {
+                if (this.durability <= 0 && this.durability != null) {
                     this.action = CardActions.WORN_OUT;
                 }
                 break;

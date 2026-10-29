@@ -68,8 +68,8 @@ export default class HeroEvents extends Event{
                         EventFactory.createHeroEventAndExecute(this.hero, null, this.enemyActiveMinionDeck, this.activeMinionDeck, this.turn, this.minion);
                         this.aux = false;
                     }else{
-                        this.minion.attack += 3;
-                        this.minion.speed  += 1;
+                        this.minion.changeStat("attack", 3);
+                        this.minion.changeStat("speed", 1);
                     }
                 
                     break;

@@ -8,6 +8,8 @@ import MinionMovementPhase from "./turn_phases/MinionMovementPhase.js";
 import Phase from "./turn_phases/Phase.js"; 
 import PrepareEventPhase from "./turn_phases/PrepareEventPhase.js";
 import UseEventPhase from "./turn_phases/UseEventPhase.js";
+import { renderMinionEffects } from "../Cards/minionEffects.js";
+import { deferCardDeltas, drawDeferredCardDeltas } from "../Cards/cardNumbers.js";
 
 // Segundos que se espera al terminar el turno, antes del descarte y del cambio, para que se vea la ultima accion
 const TURN_END_DELAY = 1.2;
@@ -374,6 +376,7 @@ export default class Turn {
             this.blockCardStatesFromHandDeck();
             this.activeMinionDeck.restoreDeckMinionsStats(messagesContainer);
             this.enemyActiveMinionDeck.restoreDeckMinionsStats(messagesContainer);
+            this.eventContainer.areEffectsApplied = false;
             this.TurnStates = TurnStates.INITIALIZE
             // cambio de turno
             this.active = false;
@@ -436,7 +439,11 @@ export default class Turn {
 
         const teamColor = team === this.turnId ? Team.ATTACKER : Team.DEFENDER
 
+        // Las diferencias de los numeros de los esbirros van por encima de sus medallones
+        deferCardDeltas();
         this.activeMinionDeck.renderCards(ctx, language, mouse, teamColor);
+        renderMinionEffects(ctx, this.eventContainer, this.activeMinionDeck, mouse);
+        drawDeferredCardDeltas(ctx);
         this.preparingEventDeck.renderCards(ctx, language, mouse);
         this.handDeck.renderCards(ctx, language, mouse);
         this.mainCharacter.render(ctx, language, teamColor);

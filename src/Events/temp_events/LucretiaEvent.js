@@ -16,19 +16,19 @@ export default class LucretiaEvent extends Event {
 
         switch (this.attribute){
             case "Attack":
-                this.objectiveMinion.attack -= this.value;
+                this.objectiveMinion.changeStat("attack", -this.value);
                 break;
 
             case "Defense":
-                this.objectiveMinion.defense -= this.value;
+                this.objectiveMinion.changeStat("defense", -this.value);
                 break;
 
             case "Health":
-                this.objectiveMinion.health -= this.value;
+                this.objectiveMinion.changeStat("health", -this.value);
                 break;
 
             case "Speed":
-                this.objectiveMinion.speed -= this.value;
+                this.objectiveMinion.changeStat("speed", -this.value);
                 break;
 
         }

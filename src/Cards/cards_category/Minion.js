@@ -2,6 +2,10 @@ import { CardActions, CardId, IconsPos, BorderId, TurnId, RarityId, IconsId, VFX
 import Card from "../Card.js";
 import { DeltaPosition, NumberMode, drawCardNumber } from "../cardNumbers.js";
 import Messages from "../../Messages.js";
+
+// Lo menos que pueden dejar los efectos cada estadistica; la defensa no tiene minimo
+const STAT_MINIMUMS = { attack: 0, health: 1, speed: 0 };
+
 export default class Minion extends Card {
 
     constructor(id, texts, image, rarity, category, type, xPos, yPos,imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, imageVFX, weaponRarityImage, armorRarityImage, attack, defense, health, speed, imageMinionTeam, chatBubble, messages, toolTip) {
@@ -22,6 +26,7 @@ export default class Minion extends Card {
         this.previousCriticModifier = 1;
         this.failModifier           = 1;
         this.previousFailModifier   = 1;
+        this.statDebts              = {};               // Lo que los efectos han dejado cada estadistica por debajo de su minimo
         this.weapon                 = undefined;
         this.armor                  = undefined;
         this.weaponRarityImage      = weaponRarityImage;
@@ -163,6 +168,26 @@ export default class Minion extends Card {
         this.speed = this.previousSpeed;
         this.criticModifier = this.previousCriticModifier;
         this.failModifier = this.previousFailModifier;
+        this.statDebts = {};
+    }
+
+    // Lo que valdria la estadistica sin su minimo: lo que los efectos la han dejado por debajo cuenta para los siguientes
+    getRawStat(stat){
+
+        return this[stat] - (this.statDebts[stat] ?? 0);
+    }
+
+    // Un efecto deja la estadistica en un valor. El ataque y la velocidad no bajan de 0 ni la vida de 1, pero lo que se
+    // queda por debajo se apunta para los siguientes efectos: asi el orden en que se aplican no cambia el resultado
+    setRawStat(stat, value){
+
+        this[stat] = Math.max(STAT_MINIMUMS[stat] ?? -Infinity, value);
+        this.statDebts[stat] = this[stat] - value;
+    }
+
+    changeStat(stat, amount){
+
+        this.setRawStat(stat, this.getRawStat(stat) + amount);
     }
 
     deselect(){
@@ -356,7 +381,8 @@ export default class Minion extends Card {
         
     // }
     checkTooltip(){
-        if(this.state === CardId.HOVER){
+        // Sobre los medallones de sus efectos se explica el efecto, no el esbirro
+        if(this.state === CardId.HOVER && !this.isEffectHovered){
             return true;
         }else{
             this.toolTip.timer.restart();
