@@ -2,7 +2,8 @@ import Particle from "./Particle.js";
 import { AttackImpact, ParticleId, TypeId } from "./constants.js";
 import globals from "./globals.js";
 
-// El polvo y el humo van por debajo de las cartas; las chispas, los tajos y los destellos por encima
+// El polvo y el humo van por debajo de las cartas, salvo los que piden ir por encima; las chispas, los tajos y los
+// destellos siempre por encima
 const BELOW_CARDS = [ParticleId.DUST, ParticleId.SMOKE];
 
 // Colores [r, g, b] de cada efecto
@@ -12,6 +13,7 @@ const EMBER         = [255, 120, 40];
 const BLOOD         = [220, 40, 30];
 const STEEL         = [150, 200, 255];
 const ASH           = [70, 62, 58];
+const CARD_SMOKE    = [128, 118, 108];          // Mas claro que el de los esbirros para que se vea sobre los huecos oscuros
 
 const EVENT_COLORS = {
     [TypeId.BUFF]:      [255, 210, 70],
@@ -137,6 +139,23 @@ export default class ParticlesContainer{
         }
     }
 
+    // Carta del grid de preparacion que se deshace: humo que sube y brasas, como un esbirro al morir. El humo va por
+    // encima de las cartas porque las de los huecos de al lado lo taparian
+    createCardSmoke(xPos, yPos, width, height){
+
+        const xCenter = xPos + width / 2;
+        const yCenter = yPos + height / 2;
+
+        for (let i = 0; i < 10; i++){
+
+            const xSmoke = xCenter + (Math.random() - 0.5) * width * 0.8;
+            const ySmoke = yCenter + (Math.random() - 0.5) * height * 0.6;
+            this.add(ParticleId.SMOKE, xSmoke, ySmoke, (Math.random() - 0.5) * 24, -45 - Math.random() * 50, 0.8 + Math.random() * 0.3, 16 + Math.random() * 10, CARD_SMOKE, { growth: 30, drag: 0.5, alpha: 0.7, aboveCards: true });
+        }
+
+        this.createBurst(xCenter, yCenter, 14, EMBER, 220, 2.5, -120);
+    }
+
     // Brasa que sube y se apaga, de una carta que arde
     createEmber(xPos, yPos){
 
@@ -194,7 +213,7 @@ export default class ParticlesContainer{
 
         for (let i = 0; i < this.particles.length; i++){
 
-            if (BELOW_CARDS.includes(this.particles[i].id)){
+            if (BELOW_CARDS.includes(this.particles[i].id) && !this.particles[i].isAboveCards){
 
                 this.particles[i].render(ctx);
             }
@@ -205,7 +224,7 @@ export default class ParticlesContainer{
 
         for (let i = 0; i < this.particles.length; i++){
 
-            if (!BELOW_CARDS.includes(this.particles[i].id)){
+            if (!BELOW_CARDS.includes(this.particles[i].id) || this.particles[i].isAboveCards){
 
                 this.particles[i].render(ctx);
             }

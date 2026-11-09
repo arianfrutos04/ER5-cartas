@@ -19,6 +19,7 @@ import Menu from "./Menu.js";
 import QuickHelp from "./QuickHelp.js";
 import GameOverScreen from "./GameOverScreen.js";
 import JosephEntrance from "./JosephEntrance.js";
+import CardBreaks from "./CardBreaks.js";
 
 // Al cambiar de turno el cartel entra primero y, con el velo ya oscuro, el tablero cambia de lado: los esbirros y
 // personajes pasan a su nuevo sitio y las manos y los eventos preparados cruzan el tablero hacia el suyo
@@ -55,6 +56,7 @@ export default class Game {
         this.timerContainer = timerContainer;
         this.finished = false;
         this.particlesContainer = particlesContainer;
+        this.cardBreaks = new CardBreaks(canvas, particlesContainer);  // Cartas que se rompen al salir del grid de preparacion
         this.soundManager = soundManager;
         this.menu = menu;
         this.game = 0;
@@ -174,6 +176,7 @@ export default class Game {
                 }
 
                 this.updateJosephEntrance();
+                this.updateCardBreaks();
 
                 this.mouse.update();
                 this.particlesContainer.update();
@@ -293,6 +296,14 @@ export default class Game {
         this.menu.render(this.ctx, this.turnContainer.buttonContainer.container[ButttonsId.BTN_RETURN_TO_MENU], this.gameState, this.language);
         this.turnContainer.buttonContainer.renderButtons(this.language, this.gameState === GameState.MENU ? this.menu.previousState : undefined);
         this.turnContainer.render(this.ctx, this.language, this.mouse, this.currentTurn);
+
+        // Las cartas que se rompen en el grid de preparacion; con una carta ampliada delante no se ven
+        const decks = this.deckContainer.decks;
+
+        if (!decks[0].isAnyCard(decks, CardId.SCALED)[0]){
+
+            this.cardBreaks.render(this.ctx);
+        }
 
         if (this.josephEntrance !== undefined){
 
@@ -483,6 +494,8 @@ export default class Game {
     // Las cartas van hacia su Slot poco a poco, o siguen su animacion si estan cambiando de sitio con el turno
     assignCardsToGrids(decks, grids) {
 
+        // Mientras se rompe alguna carta de este grid las demas esperan en su sitio para recolocarse
+        const isWaitingForBreaks = this.cardBreaks.isBreakingIn(grids);
         let k = 0;
 
         for (let i = 0; i < grids.slots.length; i++){
@@ -496,7 +509,7 @@ export default class Game {
                         this.flyCard(decks.cards[k], grids.slots[i][j]);
                     }
 
-                    else{
+                    else if (!isWaitingForBreaks){
 
                         decks.cards[k].xPos = this.moveTowards(decks.cards[k].xPos, grids.slots[i][j].xPos, 900);
                         decks.cards[k].yPos = this.moveTowards(decks.cards[k].yPos, grids.slots[i][j].yPos, 1000);
@@ -617,6 +630,15 @@ export default class Game {
                 this.josephEntrance = undefined;
             }
         }
+    }
+
+    // Las cartas que salen del grid de preparacion se rompen en su hueco, salvo las que quema Joseph al entrar
+    updateCardBreaks(){
+
+        const decks = this.deckContainer.decks;
+        const preparingDecks = [decks[DecksId.PLAYER_1_PREPARING_EVENT_DECK], decks[DecksId.PLAYER_2_PREPARING_EVENT_DECK]];
+
+        this.cardBreaks.update(preparingDecks, decks[DecksId.GRAVEYARD_DECK], this.josephEntrance !== undefined, globals.deltaTime);
     }
 
     updateCardFlights(){
