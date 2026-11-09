@@ -20,6 +20,7 @@ export default class Particle{
         this.alpha      = options.alpha    ?? 1;
         this.angle      = options.angle    ?? 0;            // para el tajo: angulo de inicio del arco
         this.sweep      = options.sweep    ?? 0;            // para el tajo: angulo que recorre el arco
+        this.isAboveCards = options.aboveCards ?? false;    // el humo y el polvo que se pintan por encima de las cartas
     }
 
     update(deltaTime){
