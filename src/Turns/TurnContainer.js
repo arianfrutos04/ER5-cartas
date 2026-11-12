@@ -11,6 +11,7 @@ export default class TurnContainer {
         this.deckContainer      = deckContainer;
         this.buttonContainer    = buttonContainer;
         this.eventContainer    = eventContainer;
+        this.actionsTurn        = undefined;                // El turno cuyo contador de acciones se ve
     }
 
     selectRandomHero(heroDeck)
@@ -71,6 +72,20 @@ export default class TurnContainer {
         const turn = this.turnContainer[currentTurn]
         const pos = (currentTurn+1)%2
         const enemyTurn = this.turnContainer[pos]
+
+        // El contador de acciones es el del turno activo. Entre un turno y el siguiente no hay ninguno activo: se queda el
+        // del que acaba de terminar hasta que empieza el nuevo, como el reloj, y al principio de la partida el del primero
+        const activeTurn = this.turnContainer.find((other) => other.active);
+
+        if (activeTurn !== undefined){
+
+            this.actionsTurn = activeTurn;
+        }
+
+        const actionsTurn = this.actionsTurn ?? turn;
+        turn.isShowingActions = actionsTurn === turn;
+        enemyTurn.isShowingActions = actionsTurn === enemyTurn;
+
         turn.render(ctx, language, currentTurn, xPos, yPos, mouse, currentTurn)
         enemyTurn.render(ctx, language, pos, enemyXpos, enemyYpos, mouse, currentTurn)
 
