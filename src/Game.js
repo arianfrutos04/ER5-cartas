@@ -279,9 +279,15 @@ export default class Game {
                 this.renderGameOver();
                 break;
             default:
-                
+
                 break;
 
+        }
+
+        // El cursor del juego, encima de todo en las pantallas que se pintan en el lienzo
+        if (this.gameState === GameState.PLAYING || this.gameState === GameState.MENU || this.gameState === GameState.QUICK_HELP || this.gameState === GameState.GAMEOVER){
+
+            this.mouse.render(this.ctx);
         }
     }
 
