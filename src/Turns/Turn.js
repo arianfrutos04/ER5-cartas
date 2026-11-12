@@ -41,6 +41,7 @@ export default class Turn {
         this.enemyActiveMinionDeck = enemyActiveMinionDeck
         this.buttonContainer    = buttonContainer;          // Contenedor de buttons
         this.active             = false;                    // Variable para saber si el turno esta activo
+        this.isShowingActions   = false;                    // Si este turno pinta el contador de acciones (lo decide TurnContainer)
         this.state              = TurnStates.INITIALIZE;     // Estado del turno
         this.endWaitTime        = 0;                        // Tiempo que lleva esperando para cerrar el turno
         this.isVictory          = false;                    // El rival se ha quedado sin esbirros
@@ -463,7 +464,7 @@ export default class Turn {
         ctx.fillStyle = "white"
         ctx.fillText(this.name ,xPos, yPos);
         ctx.restore()
-        if (this.active) {
+        if (this.isShowingActions) {
             const actionsLeft = this.maxActions-this.actionsCounter
             ctx.save()
             ctx.font = "64px LongaIberica-DEMO"
