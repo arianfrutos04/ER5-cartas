@@ -88,6 +88,24 @@ export default class Button {
         this.ctx.restore();
     }
 
+    // Lo que se ve del boton: las placas son mas grandes que la zona que responde al raton, y de ellas cuenta su marco
+    // dorado macizo, que va de x + 2 a x + 133, sin la sombra ni el brillo difuso de alrededor
+    getArea(){
+
+        // El de terminar turno es el texto sobre el banderin del tablero, que va de x + 9 a x + 88
+        if (this.id === ButttonsId.BTN_END_TURN){
+
+            return { xPos: this.x + 9, yPos: this.y, width: 79, height: this.height };
+        }
+
+        if (this.isIconButton()){
+
+            return { xPos: this.x, yPos: this.y, width: this.width, height: this.height };
+        }
+
+        return { xPos: this.x + 2, yPos: this.y, width: PLAQUE_WIDTH - 4, height: PLAQUE_HEIGHT };
+    }
+
     isIconButton(){
 
         return this.id === ButttonsId.BTN_CHANGE_LANGUAGE || this.id === ButttonsId.BTN_QUICK_HELP || this.id === ButttonsId.BTN_RETURN_TO_MENU;

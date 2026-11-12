@@ -1,4 +1,6 @@
-import { BoardCardSizes, CardActions, CardId, LanguageId, ScreenSize, TooltipText } from "../constants.js";
+import { CardActions, CardId, LanguageId, TooltipText, TypeId } from "../constants.js";
+import Tooltip from "../Tooltip.js";
+import { Placement, TooltipInk, TypeInk } from "../tooltipStyle.js";
 
 // Medallones de las mejoras y maldiciones de cada esbirro del tablero. Las mejoras se amontonan en la esquina de abajo a
 // la izquierda y las maldiciones en la de abajo a la derecha; las de arriba se dejan libres para el arma y la armadura.
@@ -23,12 +25,6 @@ const CURSE_CORNER      = [117, 139];
 
 const BUFF_COLOR        = [255, 205, 80];
 const CURSE_COLOR       = [190, 110, 245];
-
-const TOOLTIP_WIDTH     = 280;
-const TOOLTIP_PADDING   = 12;
-const TOOLTIP_LINE      = 19;
-const TOOLTIP_TITLE     = 24;
-const TOOLTIP_GAP       = 10;
 
 const STAT_NAMES        = { Attack: TooltipText.ATTACK, Defense: TooltipText.DEFENSE, Health: TooltipText.HEALTH, Speed: TooltipText.SPEED };
 const DICE_FACES        = 20;
@@ -77,7 +73,9 @@ export function renderMinionEffects(ctx, eventContainer, minionDeck, mouse){
 }
 
 // Se llama despues de pintar los esbirros de los dos jugadores, para que el recuadro quede por encima de todos
-export function renderMinionEffectTooltip(ctx, eventContainer, minionDecks, mouse, language){
+// La moneda con el raton encima pide su tooltip, que sale en cuanto se pasa por encima junto a la moneda ya desplegada,
+// hacia fuera del monton: el de las mejoras a la izquierda y el de las maldiciones a la derecha
+export function requestMinionEffectTooltip(eventContainer, minionDecks, mouse){
 
     for (let i = 0; i < minionDecks.length; i++){
 
@@ -98,7 +96,12 @@ export function renderMinionEffectTooltip(ctx, eventContainer, minionDecks, mous
 
                 if (effect !== undefined){
 
-                    drawTooltip(ctx, effect, piles[k].effects.length > 1 ? piles[k] : undefined, minion, mouse.x, language);
+                    const pile = piles[k].effects.length > 1 ? piles[k] : undefined;
+                    const [xCoin, yCoin] = getCoinPositions(piles[k], 1)[piles[k].effects.indexOf(effect)];
+                    const area = { xPos: xCoin - RADIUS, yPos: yCoin - RADIUS, width: RADIUS * 2, height: RADIUS * 2 };
+                    const side = piles[k].key === "buff" ? Placement.LEFT : Placement.RIGHT;
+
+                    Tooltip.show(effect.card, area, (language) => getTooltipContent(effect, pile, minion, language), 0, side);
                     return;
                 }
             }
@@ -365,84 +368,28 @@ function drawCoin(ctx, xPos, yPos, radius, red, green, blue){
     ctx.stroke();
 }
 
-// Recuadro con el estilo de los tooltips del juego: nombre de la carta, lo que hace, sus cuentas y los turnos que le quedan
+// El tooltip de la moneda: nombre de la carta y cual es del monton, lo que hace, sus cuentas y los turnos que le quedan
 // a cada copia
-function drawTooltip(ctx, effect, pile, minion, xPos, language){
+function getTooltipContent(effect, pile, minion, language){
 
     const card = effect.card;
     const copies = effect.turns.length;
-    const title = card.texts.texts[1].text[language].trim() + (copies > 1 ? " x" + copies : "");
     const turns = effect.turns.filter((turn) => turn !== null).sort((first, second) => second - first);
-    const [red, green, blue] = effect.isBuff ? BUFF_COLOR : CURSE_COLOR;
+    const ink = TypeInk[effect.isBuff ? TypeId.BUFF : TypeId.CURSE];
+    const results = getEffectResults(effect, minion, language).map((result) => ({ text: result, ink: ink }));
+    const content = {
+        title:      card.texts.texts[1].text[language].trim() + (copies > 1 ? " x" + copies : ""),
+        titleInk:   ink,
+        corner:     pile !== undefined ? (pile.effects.indexOf(effect) + 1) + "/" + pile.effects.length : undefined,
+        sections:   [[{ text: card.texts.texts[0].text[language].trim() }, ...results]],
+    };
 
-    ctx.save();
-    ctx.font = "15px LongaIberica-DEMO";
+    if (turns.length > 0){
 
-    const lines = splitLines(ctx, card.texts.texts[0].text[language].trim(), TOOLTIP_WIDTH - TOOLTIP_PADDING * 2);
-    const results = getEffectResults(effect, minion, language);
-    const footer = turns.length > 0 ? TooltipText.TURNS_LEFT[language] + turns.join(", ") : undefined;
-    const resultsTop = TOOLTIP_PADDING + TOOLTIP_TITLE + lines.length * TOOLTIP_LINE + 6;
-    const footerTop = resultsTop + results.length * TOOLTIP_LINE + (results.length > 0 ? 4 : 0);
-    const height = footerTop + (footer !== undefined ? TOOLTIP_LINE : 0) + TOOLTIP_PADDING - 6;
-    const xBox = Math.min(Math.max(8, xPos - TOOLTIP_WIDTH / 2), ScreenSize.X_SIZE - TOOLTIP_WIDTH - 8);
-
-    // Encima de la casilla del esbirro, para no taparlo, y si no cabe debajo
-    let yBox = minion.yPos - TOOLTIP_GAP - height;
-
-    if (yBox < 8){
-
-        yBox = minion.yPos + BoardCardSizes.Y_SIZE + TOOLTIP_GAP;
+        content.sections.push([{ text: TooltipText.TURNS_LEFT[language] + turns.join(", "), ink: TooltipInk.MUTED }]);
     }
 
-    ctx.fillStyle = "#d59d00";
-    ctx.fillRect(xBox, yBox, TOOLTIP_WIDTH, height);
-    ctx.fillStyle = "#362315";
-    ctx.fillRect(xBox + 3, yBox + 3, TOOLTIP_WIDTH - 6, height - 6);
-
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-
-    ctx.font = "bold 18px LongaIberica-DEMO";
-    ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-    ctx.fillText(title, xBox + TOOLTIP_PADDING, yBox + TOOLTIP_PADDING);
-
-    // Con varias cartas en el monton, cual de ellas es
-    if (pile !== undefined){
-
-        const position = (pile.effects.indexOf(effect) + 1) + "/" + pile.effects.length;
-
-        ctx.font = "15px LongaIberica-DEMO";
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#d59d00";
-        ctx.fillText(position, xBox + TOOLTIP_WIDTH - TOOLTIP_PADDING, yBox + TOOLTIP_PADDING + 2);
-        ctx.textAlign = "left";
-    }
-
-    ctx.font = "15px LongaIberica-DEMO";
-    ctx.fillStyle = "white";
-
-    for (let i = 0; i < lines.length; i++){
-
-        ctx.fillText(lines[i], xBox + TOOLTIP_PADDING, yBox + TOOLTIP_PADDING + TOOLTIP_TITLE + i * TOOLTIP_LINE);
-    }
-
-    // Lo que le hace al esbirro, del color del efecto
-    ctx.font = "bold 15px LongaIberica-DEMO";
-    ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`;
-
-    for (let i = 0; i < results.length; i++){
-
-        ctx.fillText(results[i], xBox + TOOLTIP_PADDING, yBox + resultsTop + i * TOOLTIP_LINE);
-    }
-
-    if (footer !== undefined){
-
-        ctx.font = "15px LongaIberica-DEMO";
-        ctx.fillStyle = "#d59d00";
-        ctx.fillText(footer, xBox + TOOLTIP_PADDING, yBox + footerTop);
-    }
-
-    ctx.restore();
+    return content;
 }
 
 // Las cuentas de la carta sobre el esbirro: las estadisticas con todas sus copias sumadas, y el critico y el fallo con la
@@ -526,37 +473,6 @@ function getChance(modifier, isHit){
     }
 
     return hits * 100 / DICE_FACES;
-}
-
-// Corta el texto en lineas que quepan en el ancho, midiendo con la fuente que tenga el lienzo
-function splitLines(ctx, text, maxWidth){
-
-    const words = text.split(/\s+/);
-    const lines = [];
-    let line = "";
-
-    for (let i = 0; i < words.length; i++){
-
-        const candidate = line === "" ? words[i] : line + " " + words[i];
-
-        if (ctx.measureText(candidate).width > maxWidth && line !== ""){
-
-            lines.push(line);
-            line = words[i];
-        }
-
-        else{
-
-            line = candidate;
-        }
-    }
-
-    if (line !== ""){
-
-        lines.push(line);
-    }
-
-    return lines;
 }
 
 function easeOutBack(progress){
