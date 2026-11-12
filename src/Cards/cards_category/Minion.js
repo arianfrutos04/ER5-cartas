@@ -111,8 +111,14 @@ export default class Minion extends Card {
         if (this.state === CardId.DEAD) {
             this.xPos = 2200;
             this.yPos = 1200;
+            // Si no esta en el mazo que tiene apuntado no se quita nada: con -1, splice quitaria al ultimo esbirro
             const index = this.deck.cards.indexOf(this)
-            this.deck.cards.splice(index, 1)
+
+            if (index !== -1){
+
+                this.deck.cards.splice(index, 1)
+            }
+
             this.deck = undefined
             if (this.weapon) {
                 this.weapon.action = CardActions.READY
