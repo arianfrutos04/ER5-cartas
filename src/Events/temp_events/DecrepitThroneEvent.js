@@ -15,6 +15,12 @@ export default class DecrepitThroneEvent extends Event{
         // Search card index
         const index = this.enemyActiveMinionDeck.cards.indexOf(this.minion);
 
+        // Si ya no esta en el mazo rival no se posee nada: con -1, splice quitaria el ultimo esbirro del rival
+        if (index === -1){
+
+            return;
+        }
+
         // Splice the card from enemyActiveDeck
         this.enemyActiveMinionDeck.cards.splice(index, 1);
 
@@ -24,6 +30,9 @@ export default class DecrepitThroneEvent extends Event{
         
         // Push the card to activeMinionDeck
         this.activeMinionDeck.cards.push(this.minion);
+
+        // Mientras esta poseido es del mazo de quien lo posee: si muere, se busca y se quita de ahi
+        this.minion.setDeck(this.activeMinionDeck);
 
     }
 

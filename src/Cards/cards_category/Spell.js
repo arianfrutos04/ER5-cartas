@@ -346,7 +346,9 @@ export default class Spell extends Card{
             case CardActions.READY:
                 return ["READY", "PREST"];
 
+            // La gastada aun se pinta en el fotograma antes de salir del grid
             case CardActions.ON_USE:
+            case CardActions.WORN_OUT:
                 return ["APPLIED", "ERABILITA"];
 
             default:

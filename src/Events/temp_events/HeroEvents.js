@@ -62,12 +62,21 @@ export default class HeroEvents extends Event{
                     break;  
 
                 case MainCharacterId.DECREPIT_TRHONE:
+                    // Posee a uno de los esbirros que tenga el rival; si no tiene ninguno, no hay a quien poseer
                     if(this.aux){
-                        const randomMinion = Math.floor(Math.random() * 3);
-                        this.minion        = this.enemyActiveMinionDeck.cards[randomMinion];
-                        EventFactory.createHeroEventAndExecute(this.hero, null, this.enemyActiveMinionDeck, this.activeMinionDeck, this.turn, this.minion);
+                        const randomMinion = Math.floor(Math.random() * this.enemyActiveMinionDeck.cards.length);
+                        this.minion        = this.enemyActiveMinionDeck.cards[randomMinion] ?? null;
+
+                        if (this.minion !== null){
+
+                            EventFactory.createHeroEventAndExecute(this.hero, null, this.enemyActiveMinionDeck, this.activeMinionDeck, this.turn, this.minion);
+                        }
+
                         this.aux = false;
-                    }else{
+                    }
+
+                    // La mejora sigue solo mientras el esbirro siga poseido
+                    else if (this.minion !== null && this.activeMinionDeck.cards.includes(this.minion)){
                         this.minion.changeStat("attack", 3);
                         this.minion.changeStat("speed", 1);
                     }
