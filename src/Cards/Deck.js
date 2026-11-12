@@ -4,6 +4,9 @@ import { resetCardNumbers } from "./cardNumbers.js";
 import Messages from "../Messages.js";
 import { MessageType, MessageState } from "../constants.js";
 
+// Los tipos de carta que tienen tooltip
+const TOOLTIP_TYPES = [TypeId.ARMOR, TypeId.BUFF, TypeId.CURSE, TypeId.JOSEPH, TypeId.MINION, TypeId.SPELL, TypeId.WEAPON];
+
 
 export default class Deck {
     constructor(deckId, cards = []){
@@ -179,69 +182,24 @@ export default class Deck {
                 card.render(ctx, language, team);
 
             }
-            
-            this.renderTooltips(mouse, language, ctx);
         }
 
+        this.requestTooltip();
     }
 
-    renderTooltips(mouse, language, ctx){
-        let isCollidingWithWeapon
+    // La carta con el raton encima pide su tooltip, que sale a su lado por encima de todo el tablero; las de la mano no
+    // tienen
+    requestTooltip(){
+
+        const isHand = this.deckId === DecksId.PLAYER_1_HAND_DECK || this.deckId === DecksId.PLAYER_2_HAND_DECK;
 
         for (let i = 0; i < this.cards.length; i++){
 
             const card = this.cards[i];
-            
-            if (card.category === TypeId.WEAPON){
-                
-                isCollidingWithWeapon = mouse.isCollidingWithCard(card);
 
-                if (isCollidingWithWeapon){
+            if (card.checkTooltip() && !isHand && TOOLTIP_TYPES.includes(card.category)){
 
-                    break;
-                }
-            }
-        }
-
-        for(let i = 0; i < this.cards.length; i++){
-
-            const card = this.cards[i];
-
-            const renderTooltip = card.checkTooltip();
-            
-            if (renderTooltip) {
-                
-                    if (this.deckId != DecksId.PLAYER_1_HAND_DECK && this.deckId != DecksId.PLAYER_2_HAND_DECK) {
-    
-                        let yPosModifier = 0
-                        let xPosModifier = 0
-                        if (mouse.y >600 && isCollidingWithWeapon) {
-                            yPosModifier = 83
-                        }
-                        else if (mouse.y >600){
-                            yPosModifier = 63
-                        }
-                        if (mouse.x >1750) {
-                            xPosModifier = 218
-                        }
-                        const xPos = mouse.x - xPosModifier
-                        const yPos = mouse.y - yPosModifier
-                        
-                        switch(card.category){
-                            case TypeId.ARMOR:
-                            case TypeId.BUFF:
-                            case TypeId.JOSEPH:
-                            case TypeId.MINION:
-                            case TypeId.SPELL:
-                            case TypeId.CURSE:
-                                card.toolTip.render(xPos, yPos, language, ctx);
-                                break;
-                            case TypeId.WEAPON:
-                                card.toolTip.render(xPos, yPos, language, ctx, card.range);
-                                break;
-                        }
-                        
-                }
+                card.toolTip.request(card);
             }
         }
     }

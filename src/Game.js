@@ -20,6 +20,8 @@ import QuickHelp from "./QuickHelp.js";
 import GameOverScreen from "./GameOverScreen.js";
 import JosephEntrance from "./JosephEntrance.js";
 import CardBreaks from "./CardBreaks.js";
+import Tooltip from "./Tooltip.js";
+import { requestBoardTooltips } from "./boardTooltips.js";
 
 // Al cambiar de turno el cartel entra primero y, con el velo ya oscuro, el tablero cambia de lado: los esbirros y
 // personajes pasan a su nuevo sitio y las manos y los eventos preparados cruzan el tablero hacia el suyo
@@ -297,10 +299,11 @@ export default class Game {
         this.turnContainer.buttonContainer.renderButtons(this.language, this.gameState === GameState.MENU ? this.menu.previousState : undefined);
         this.turnContainer.render(this.ctx, this.language, this.mouse, this.currentTurn);
 
-        // Las cartas que se rompen en el grid de preparacion; con una carta ampliada delante no se ven
+        // Con una carta ampliada delante no se ven las cartas que se rompen en el grid de preparacion ni los tooltips
         const decks = this.deckContainer.decks;
+        const isAnyCardScaled = decks[0].isAnyCard(decks, CardId.SCALED)[0] === true;
 
-        if (!decks[0].isAnyCard(decks, CardId.SCALED)[0]){
+        if (!isAnyCardScaled){
 
             this.cardBreaks.render(this.ctx);
         }
@@ -311,6 +314,16 @@ export default class Game {
         }
 
         this.particlesContainer.renderAboveCards(this.ctx);
+
+        // Los tooltips van por encima del tablero y por debajo de los textos de combate y del cartel de turno; no salen
+        // con una carta ampliada, mientras entra Joseph ni mientras cambia el turno
+        if (this.gameState === GameState.PLAYING && !isAnyCardScaled && this.josephEntrance === undefined && this.messagesContainer.changeTurnMessage.length === 0){
+
+            requestBoardTooltips(this);
+            Tooltip.renderPending(this.ctx, this.language);
+        }
+
+        Tooltip.clearPending();
         // Mientras se ve el cartel de turno, las cartas que cambian de sitio pasan por delante del velo y por detras de la banda
         this.messagesContainer.renderDamageAndChangeTurn(this.ctx, this.language, () => this.renderFlyingCards());
 
