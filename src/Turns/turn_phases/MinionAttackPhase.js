@@ -242,6 +242,18 @@ export default class MinionAttackPhase extends Phase {
             const deck = decks[i];
             deck.update(this.mouse, decks)
         }
+
+        // Los esbirros rivales solo son objetivos: si se pulsa uno sin haber elegido atacante no se queda seleccionado,
+        // porque entonces no se podria elegir el esbirro propio y el siguiente rival pulsado se tomaria sin atacante
+        for (let i = 0; i < this.enemyActiveMinionDeck.cards.length; i++) {
+
+            const enemy = this.enemyActiveMinionDeck.cards[i];
+
+            if (enemy.state === CardId.SELECTED) {
+
+                enemy.state = CardId.NOT_SELECTED;
+            }
+        }
     }
 
     checkEnemySelected(messages){
@@ -252,8 +264,8 @@ export default class MinionAttackPhase extends Phase {
         // Comprobar si hay alguna carta en hover del mazo de minions activos del rival
         let isEnemyCardHovered = this.enemyActiveMinionDeck.isAnyCard(this.enemyActiveMinionDeck, CardId.HOVER);
 
-        // Comprobar si hay enemigo seleccionado
-        if (isEnemyCardHovered[0] && !this.mouse.leftClick && this.mouse.previousStateLeft) {
+        // Comprobar si hay enemigo seleccionado, y solo si ya hay un esbirro propio que ataque
+        if (isAnyCardSelected[0] && isEnemyCardHovered[0] && !this.mouse.leftClick && this.mouse.previousStateLeft) {
 
             // messages[MessageType.HELP_MESSAGE].timeInOn = 0;
 
