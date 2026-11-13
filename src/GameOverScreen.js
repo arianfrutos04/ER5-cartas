@@ -23,6 +23,17 @@ const Layout = {
     FOOTER_Y:           962,
 };
 
+// Los rombos de arriba y abajo de cada aro vienen en el panel y sus puntas entran en el hueco del retrato. Para que la
+// foto no las tape se sacan del panel los pixeles de las puntas que no son el relleno del hueco y se pintan encima
+const RING_FILL         = [106, 97, 74];        // Color del relleno del hueco de los aros en el panel
+const FILL_TOLERANCE    = 18;
+const TIP_HALF_WIDTH    = 11;
+const TIP_DEPTH         = 26;                   // Hasta donde entran en el hueco, desde el borde del aro
+const RING_OUTLINE      = "rgba(62, 36, 14, 0.92)";
+const RING_OUTLINE_WIDTH = 2.25;
+
+let tipsPatch = undefined;
+
 const STATS = [
     { TEXT: GameOverText.MELEE_HITS,       VALUE: "meleeHits" },
     { TEXT: GameOverText.RANGED_HITS,      VALUE: "rangedHits" },
@@ -44,6 +55,13 @@ export default class GameOverScreen {
 
         GameOverScreen.renderPlayer(ctx, game.winnerCharacter, game.winner, GameOverText.WINNER[language], Layout.PORTRAIT_X[0], true);
         GameOverScreen.renderPlayer(ctx, game.loserCharacter, game.loser, GameOverText.LOSER[language], Layout.PORTRAIT_X[1], false);
+
+        const tips = GameOverScreen.getTipsPatch(panel);
+
+        if (tips !== undefined){
+
+            ctx.drawImage(tips, 0, 0);
+        }
 
         GameOverScreen.renderStats(ctx, game.winnerStats, game.loserStats, language);
 
@@ -69,8 +87,75 @@ export default class GameOverScreen {
         ctx.drawImage(character.image[CardId.BIG_SIZE], xPos - radius, Layout.PORTRAIT_Y - radius, radius * 2, radius * 2);
         ctx.restore();
 
+        // El contorno oscuro interior del aro, que en el panel recorre todo el borde y la foto tapaba
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(xPos, Layout.PORTRAIT_Y, radius - RING_OUTLINE_WIDTH / 2, 0, Math.PI * 2);
+        ctx.lineWidth = RING_OUTLINE_WIDTH;
+        ctx.strokeStyle = RING_OUTLINE;
+        ctx.stroke();
+        ctx.restore();
+
         GameOverScreen.renderEngraved(ctx, label, xPos, Layout.LABEL_Y, "700 22px '" + TITLE_FONT + "'", isWinner ? WINNER_INK : LOSER_INK, "4px");
         GameOverScreen.renderEngraved(ctx, name, xPos, Layout.NAME_Y, "700 34px '" + TITLE_FONT + "'", isWinner ? TITLE_INK : INK, "1px");
+    }
+
+    // Las puntas de los rombos que caen dentro de los huecos de los retratos, sacadas del panel una sola vez
+    static getTipsPatch(panel){
+
+        if (tipsPatch !== undefined && tipsPatch.panel === panel){
+
+            return tipsPatch.canvas;
+        }
+
+        if (!panel.complete || panel.naturalWidth === 0){
+
+            return undefined;
+        }
+
+        const source = document.createElement("canvas");
+        source.width = panel.naturalWidth;
+        source.height = panel.naturalHeight;
+        const sourceContext = source.getContext("2d");
+        sourceContext.drawImage(panel, 0, 0);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = source.width;
+        canvas.height = source.height;
+        const context = canvas.getContext("2d");
+        const radius = Layout.PORTRAIT_RADIUS;
+        const width = TIP_HALF_WIDTH * 2 + 1;
+
+        for (const xCenter of Layout.PORTRAIT_X){
+
+            for (const yStart of [Layout.PORTRAIT_Y - radius, Layout.PORTRAIT_Y + radius - TIP_DEPTH]){
+
+                const xStart = xCenter - TIP_HALF_WIDTH;
+                const image = sourceContext.getImageData(xStart, yStart, width, TIP_DEPTH);
+                const data = image.data;
+
+                for (let y = 0; y < TIP_DEPTH; y++){
+
+                    for (let x = 0; x < width; x++){
+
+                        const i = (y * width + x) * 4;
+                        const isInside = Math.hypot(xStart + x + 0.5 - xCenter, yStart + y + 0.5 - Layout.PORTRAIT_Y) < radius;
+                        const isFill = Math.max(Math.abs(data[i] - RING_FILL[0]), Math.abs(data[i + 1] - RING_FILL[1]), Math.abs(data[i + 2] - RING_FILL[2])) <= FILL_TOLERANCE;
+
+                        if (!isInside || isFill){
+
+                            data[i + 3] = 0;
+                        }
+                    }
+                }
+
+                context.putImageData(image, xStart, yStart);
+            }
+        }
+
+        tipsPatch = { panel: panel, canvas: canvas };
+
+        return canvas;
     }
 
     // Tabla comparada: el valor del ganador a la izquierda y el del perdedor a la derecha
