@@ -27,7 +27,7 @@ export default class Button {
         this.isEnabled      = true;
 }
 
-    render(language){
+    render(language, textSize){
 
         if (this.isIconButton()) {
             this.renderIcon();
@@ -44,30 +44,47 @@ export default class Button {
             this.ctx.filter = "blur(0px)";
         }
 
-        if (this.height > 70 && this.height < 100) {
+        if (this.isPlaque()) {
 
-            this.renderPlaque(language);
+            this.renderPlaque(language, textSize ?? this.getPlaqueTextSize(language));
         }
     }
 
-    // Placa de madera con marco dorado; las acciones sin usos se ven apagadas
-    renderPlaque(language){
+    // Si es una placa de madera con texto: las de las acciones, el menu y el bloqueo
+    isPlaque(){
 
-        const isDisabled = !this.isEnabled && this.renderState === renderState.GAME;
-        const imageIndex = isDisabled ? ButtonImageId.DISABLED : this.state === ButtonState.SELECTED ? ButtonImageId.ACTIVE : this.state === ButtonState.HOVER ? ButtonImageId.HOVER : ButtonImageId.NORMAL;
+        return this.height > 70 && this.height < 100;
+    }
 
-        this.ctx.drawImage(this.img[imageIndex], this.x - PLAQUE_MARGIN, this.y - PLAQUE_MARGIN);
+    // El tamano de letra mas grande con el que su texto cabe en la placa en ese idioma
+    getPlaqueTextSize(language){
 
-        // El texto se reduce hasta caber en la placa en cualquier idioma
         const lines = this.text[language].split("\n");
         let size = 20;
 
         this.ctx.font = "700 " + size + "px Cinzel";
 
         while (size > 13 && Math.max(...lines.map((line) => this.ctx.measureText(line).width)) > PLAQUE_TEXT_WIDTH) {
+
             size -= 1;
             this.ctx.font = "700 " + size + "px Cinzel";
         }
+
+        return size;
+    }
+
+    // Placa de madera con marco dorado; las acciones sin usos se ven apagadas. El tamano de la letra lo decide
+    // ButtonContainer, para que las placas que salen juntas lo lleven igual
+    renderPlaque(language, size){
+
+        const isDisabled = !this.isEnabled && this.renderState === renderState.GAME;
+        const imageIndex = isDisabled ? ButtonImageId.DISABLED : this.state === ButtonState.SELECTED ? ButtonImageId.ACTIVE : this.state === ButtonState.HOVER ? ButtonImageId.HOVER : ButtonImageId.NORMAL;
+
+        this.ctx.drawImage(this.img[imageIndex], this.x - PLAQUE_MARGIN, this.y - PLAQUE_MARGIN);
+
+        const lines = this.text[language].split("\n");
+
+        this.ctx.font = "700 " + size + "px Cinzel";
 
         this.ctx.textAlign      = 'center';
         this.ctx.textBaseline   = 'middle';

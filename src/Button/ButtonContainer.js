@@ -37,15 +37,25 @@ export default class ButtonContainer{
     renderButtons(language, backgroundState){
         
         const state = this.state;
+        const visible = this.container.filter((btn) => btn.renderState === state || btn.renderState === backgroundState || btn.renderState === undefined);
 
-        for (let i = 0; i < this.container.length; i++){
+        // Las placas que salen juntas llevan el mismo tamano de letra: el de la que necesita la mas pequena para que le
+        // quepa el texto
+        const textSizes = {};
 
-            const btn = this.container[i];
+        for (let i = 0; i < visible.length; i++){
 
-            if (btn.renderState === state || btn.renderState === backgroundState || btn.renderState === undefined){
+            const btn = visible[i];
 
-                btn.render(language);
+            if (btn.isPlaque()){
+
+                textSizes[btn.renderState] = Math.min(textSizes[btn.renderState] ?? Infinity, btn.getPlaqueTextSize(language));
             }
+        }
+
+        for (let i = 0; i < visible.length; i++){
+
+            visible[i].render(language, textSizes[visible[i].renderState]);
         }
     }
 
