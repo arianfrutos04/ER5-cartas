@@ -196,7 +196,11 @@ export default class Button {
 
         this.isEnabled = turn.actionsCounter < turn.maxActions && turn.state != TurnStates.INITIALIZE && timer.value > 0;
 
-        if (this.isEnabled || turn.state != TurnStates.INITIALIZE && this.id === ButttonsId.BTN_CHANGE_LANGUAGE || turn.state != TurnStates.INITIALIZE && this.id === ButttonsId.BTN_RETURN_TO_MENU){
+        // Los del menu y la ayuda rapida responden siempre que su ventana esta abierta, aunque haya un boton de la partida
+        // pulsado (una accion a medias o terminar turno) o no queden acciones: si no, no habia forma de salir de ellas
+        const isWindowButton = this.renderState === renderState.MENU || this.renderState === renderState.QUICK_HELP;
+
+        if (this.isEnabled || isWindowButton || turn.state != TurnStates.INITIALIZE && this.id === ButttonsId.BTN_CHANGE_LANGUAGE || turn.state != TurnStates.INITIALIZE && this.id === ButttonsId.BTN_RETURN_TO_MENU){
             
             // MAQUINA DE ESTADOS
             switch(state){
@@ -210,7 +214,7 @@ export default class Button {
 
                     this.state = isCollidingWithMouse ? this.state = ButtonState.HOVER : ButtonState.NOT_SELECTED;
 
-                    if (this.id != ButttonsId.BTN_CHANGE_LANGUAGE && this.id != ButttonsId.BTN_RETURN_TO_MENU && this.id != ButttonsId.BTN_QUICK_HELP){
+                    if (this.id != ButttonsId.BTN_CHANGE_LANGUAGE && this.id != ButttonsId.BTN_RETURN_TO_MENU && this.id != ButttonsId.BTN_QUICK_HELP && !isWindowButton){
 
                         this.state = !mouse.leftClick && !isAnyButtonSelected && mouse.previousStateLeft ? ButtonState.SELECTED : this.state;
                     }

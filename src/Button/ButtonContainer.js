@@ -86,9 +86,19 @@ export default class ButtonContainer{
             return;
         }
 
+        // Los iconos de idioma, ayuda y menu (los botones sin pantalla propia) solo responden en la partida: con el menu o
+        // la ayuda abiertos no se pueden pulsar. Volver a abrir el menu desde el menu dejaba la partida atascada en el
+        const isGameScreen = state === renderState.GAME || state === renderState.PARRY;
+
         for (let i = 0; i < this.container.length; i++){
 
             const btn = this.container[i];
+
+            if (btn.renderState === undefined && !isGameScreen){
+
+                btn.state = ButtonState.NOT_SELECTED;
+                continue;
+            }
 
             if (btn.renderState === state || btn.renderState === undefined){
 
