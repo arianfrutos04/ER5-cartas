@@ -1,5 +1,4 @@
-import Messages from "../../Messages.js";
-import { BorderId, CardActions, CardId, IconsPos, IconsId, VFXId, StatsId, DecksId, DurabilityColors, TypeNames, MessageType, MessageState, TurnStates, ScreenSize} from "../../constants.js";
+import { BorderId, CardActions, CardId, IconsPos, VFXId, StatsId, DecksId, DurabilityColors, TurnStates } from "../../constants.js";
 import Card from "../Card.js";
 import { drawEventSlotImage, eventFade, eventReadyGlow, eventSelectGlow } from "../eventSlotStyle.js";
 import { NumberMode, drawCardNumber } from "../cardNumbers.js";
@@ -41,7 +40,6 @@ export default class Armor extends Card{
 
                 case CardId.SELECTED:
                     this.state = !mouse.rightClick && mouse.previousStateRight && isCollidingWithMouse ? CardId.SCALED : this.state
-                    // console.log("selected");
                     break;
             }
         } else if (this.state === CardId.SCALED) {
@@ -71,7 +69,6 @@ export default class Armor extends Card{
                     case CardId.SELECTED:
                         this.state = 
                             !mouse.leftClick      && mouse.previousStateLeft  && isCollidingWithMouse    ? CardId.NOT_SELECTED        :  this.state
-                        // console.log("selected");
                         break;
 
                     case CardId.SCALED:
@@ -168,7 +165,6 @@ export default class Armor extends Card{
         const cooldownRender = this.state === CardId.SCALED ? this.previousCooldown : this.cooldown
         const attackRender = this.state === CardId.SCALED ? this.previousAttack : this.attack
         const defenseRender = this.state === CardId.SCALED ? this.previousDefense : this.defense
-        const healthRender = this.state === CardId.SCALED ? this.previousHealth : this.health
 
         if (this.deck.deckId === DecksId.PLAYER_1_HAND_DECK || this.deck.deckId === DecksId.PLAYER_2_HAND_DECK) {
             this.setHandTransform(ctx);
@@ -251,11 +247,6 @@ export default class Armor extends Card{
             }
                 
                     if (size === BorderId.NORMAL_SIZE) {
-                        // ctx.font = "25px LongaIberica-DEMO";
-                        // ctx.fillText(this.name[language], IconsPos.NAME_X + xPos, IconsPos.NAME_Y + yPos);
-                        // ctx.font = "15px LongaIberica-DEMO";
-                        // ctx.fillText(this.description[language], IconsPos.DESCRIPTION_X + xPos, IconsPos.DESCRIPTION_Y + yPos);
-                        // ctx.font = "25px LongaIberica-DEMO";
                         this.texts.render(ctx, xPos, yPos, language);
 
                         //CATEGORY ICON

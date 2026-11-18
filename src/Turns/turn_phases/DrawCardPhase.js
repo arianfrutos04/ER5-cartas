@@ -1,4 +1,4 @@
-import { BuffId, CardActions, CardId, CardImageId, MAXIMUN_CARDS_IN_HAND , PhaseStates, Sound} from "../../constants.js";
+import { CardActions, CardImageId, MAXIMUN_CARDS_IN_HAND, Sound } from "../../constants.js";
 import Phase from "./Phase.js";
 
 export default class DrawCardPhase extends Phase{
@@ -48,20 +48,5 @@ export default class DrawCardPhase extends Phase{
             this.graveyardDeck.cards.pop()
         }
         this.eventDeck.shuffle()
-    }
-
-    isPhaseCancelled(buttonContainer, messagesContainer){
-        
-        const buttonState = buttonContainer.isAnyButtonSelected();
-
-        if(buttonState === PhaseStates.DEFAULT){
-
-            messagesContainer.messages[MessageType.HELP_MESSAGE].timeInOn = 0;
-            return true;
-        }else {
-
-            return false;
-        }
-
     }
 }

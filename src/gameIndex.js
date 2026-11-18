@@ -1,8 +1,7 @@
 import globals from "./globals.js";
-import {initHTMLelements, initVars, testArray } from "./initialize.js";
+import {initHTMLelements, initVars} from "./initialize.js";
 import Game from "./Game.js";
 import { BaseURL, BaseURLValue } from "./constants.js";
-// import Chart from 'chart.js/auto';
 
 let game
 let gameScreen = document.getElementById("login");
@@ -94,12 +93,9 @@ function showStats() {
           overlay.style.display = 'block';
 
       let games = document.getElementById("games");
-      let gamesDivs = document.getElementsByClassName("user")
       let win = document.getElementById("win");
       let hit = document.getElementById("hit");
       let dmg = document.getElementById("dmg");
-      let imgs = document.getElementsByClassName("img")
-      let vs = document.getElementsByClassName("vs")
       let title = document.getElementsByClassName("title")
       let div = document.getElementById("returnDiv");
         caja.style.display = "none"
@@ -238,7 +234,6 @@ function addElement(opponent) {
   div.appendChild(barRed)
 }
 function createWinRateChart(wins, loses){
-  const chart = document.getElementById('winRate')
   Chart.defaults.color = "#f4e5c3"
   new Chart("winRate", {
     type: "pie",
@@ -264,7 +259,6 @@ function createWinRateChart(wins, loses){
 }
 
 function createRightSideCharts(id, games){
-  const chart = document.getElementById('hitStats')
   const labels = [ "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December" ];
   let melee       = []
@@ -301,7 +295,6 @@ function createRightSideCharts(id, games){
 }
 function createHitStatsChart(melee, ranged, months) {
 
-  const chart = document.getElementById('damageStats')
   const data = {
     labels: months,
     datasets: [{
@@ -339,7 +332,6 @@ function createHitStatsChart(melee, ranged, months) {
     });
 }
 function createLineChart(dmgDone, dmgReceived, months) {
-  const chart = document.getElementById('damageStats')
   const labels = months
   const data = {
     
@@ -382,7 +374,6 @@ function init(){
         const ctx = html[1];
         initVars();
         
-        //initEvents(canvas);
         const language = parseInt(document.getElementById("languages").value);
 
         game = Game.init(data,canvas,ctx, language);

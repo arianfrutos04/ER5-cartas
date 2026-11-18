@@ -123,7 +123,6 @@ export default class Deck {
 
             if(health > 0){
                 
-                console.log(yPosMessage);
                 const message = new Messages(minion.xPos, yPosMessage, "+ " + health, MessageType.DAMAGE_MESSAGE, MessageState.APPEAR, 0.2, 0.3, 1.5, 50, "#04ff00");
                 messagesContainer.addMessage(message);
             }

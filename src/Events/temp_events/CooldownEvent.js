@@ -1,4 +1,3 @@
-import { CardActions } from "../../constants.js";
 import Event from "../Event.js";
 
 export class CooldownEvent extends Event{

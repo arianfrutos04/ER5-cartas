@@ -57,24 +57,4 @@ export default class Timer{
 
         return timer;
     }
-
-    updatePlus(){
-        if (this.value <= 0){
-            
-            // Reseteamos el Timer
-            this.value = this.previousValue;
-        }
-
-        // Incrementamos el contador de cambio de valor
-        this.timerChangeCounter += globals.deltaTime;
-
-        // Si ha pasado el tiempo necesario, cambiamos el valor del timer
-        if (this.timerChangeCounter > this.timerChangeValue){
-
-            this.value++;
-
-            // Reseteamos timeChangeCounter
-            this.timerChangeCounter = 0;
-        }
-    }
 }

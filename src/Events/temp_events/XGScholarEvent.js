@@ -11,7 +11,6 @@ export default class XGScholarEvent extends Event {
 
     // Stares at an ally, granting them 2 extra health points and 2 attack points permanently.
     execute(){
-        console.log("entra al ejecute");
 
         switch (this.attribute){
             case "Attack":

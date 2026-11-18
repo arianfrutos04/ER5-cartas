@@ -90,7 +90,6 @@ export default class MinionAttackPhase extends Phase {
                 return true;
     
             } else {
-                // console.log("no puedes atacar");                
 
                 attacker.state = CardId.NOT_SELECTED;
                 enemy.state = CardId.NOT_SELECTED;
@@ -297,7 +296,6 @@ export default class MinionAttackPhase extends Phase {
 
     checkIfEnemyHasWeapon(){
         if(this.enemy !== null){
-            // console.log("enemigo seleccionado");
             this.state = AttackState.ATTACK;
 
             if(this.enemy.weapon != undefined){

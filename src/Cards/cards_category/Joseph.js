@@ -1,9 +1,6 @@
-import EventContainer from "../../Events/EventContainer.js";
-import { DestroyAllMinionsEvent } from "../../Events/phase_events/DestroyAllMinionsEvent.js";
 import { BoardCardSizes, BorderId, CardActions, CardId, DecksId, IconsPos, TurnStates, VFXId, MessageState, MessageType } from "../../constants.js";
 import Card from "../Card.js";
 import { NumberMode, drawCardNumber } from "../cardNumbers.js";
-import Messages from "../../Messages.js";
 export default class Joseph extends Card{
 
     constructor(id, texts, image, rarity, category, type, xPos, yPos, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse,imageVFX, effect, durability, chatBubble, messages, toolTip){
@@ -92,7 +89,6 @@ export default class Joseph extends Card{
                     case CardId.SELECTED:
                         this.state = 
                             !mouse.leftClick      && mouse.previousStateLeft  && isCollidingWithMouse    ? CardId.NOT_SELECTED        :  this.state
-                        // console.log("selected");
                         break;
 
                     case CardId.SCALED:
@@ -319,17 +315,6 @@ export default class Joseph extends Card{
         ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 
-    // renderToolTip(xPos, yPos, language, ctx){
-    //     ctx.fillStyle = '#d59d00'
-    //     ctx.fillRect(xPos, yPos, 178, 103 ) 
-
-    //     ctx.fillStyle = '#362315'
-    //     ctx.fillRect(xPos + 3, yPos + 3, 172, 97 ) 
-    //     ctx.fillStyle = 'white'
-    //     this.texts.texts[1].render(ctx, xPos, yPos-200, language) 
-    // }
-
-    
     checkTooltip(){
         if(this.state === CardId.HOVER){
             

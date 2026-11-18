@@ -1,4 +1,4 @@
-import { CardId, CardImageId } from "../../constants.js";
+import { CardId } from "../../constants.js";
 import Event from "../Event.js";
 
 export class DestroyAllMinionsEvent extends Event{

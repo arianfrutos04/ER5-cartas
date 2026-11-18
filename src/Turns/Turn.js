@@ -1,11 +1,10 @@
-import { BoardId, CardId, DecksId, GridId, MovePhaseStates, PhaseStates, TimerId, TurnStates, MessageType , IconsPos, ScreenSize, ButtonState, TurnId, Team, BuffId, CurseId, renderState, AttackState, Sound, ButttonsId, messageEndTurn} from "../constants.js";
+import { CardId, DecksId, GridId, PhaseStates, TimerId, TurnStates, IconsPos, ScreenSize, ButtonState, Team, BuffId, CurseId, renderState, ButttonsId, messageEndTurn } from "../constants.js";
 import globals from "../globals.js";
 import DiscardPhase from "./turn_phases/DiscardPhase.js";
 import DrawCardPhase from "./turn_phases/DrawCardPhase.js";
 import DefaultPhase from "./turn_phases/DefaultPhase.js";
 import MinionAttackPhase from "./turn_phases/MinionAttackPhase.js";
 import MinionMovementPhase from "./turn_phases/MinionMovementPhase.js";
-import Phase from "./turn_phases/Phase.js"; 
 import PrepareEventPhase from "./turn_phases/PrepareEventPhase.js";
 import UseEventPhase from "./turn_phases/UseEventPhase.js";
 import { renderMinionEffects } from "../Cards/minionEffects.js";
@@ -23,8 +22,6 @@ export default class Turn {
 
     constructor(gridArray, mainCharacter, otherMainCharacter, handDeck, enemyHandDeck, minionDeck,enemyMinionDeck, graveyardDeck, eventDeck, preparingEventDeck, enemyPreparingEventDeck, activeMinionDeck, enemyActiveMinionDeck,  buttonContainer, eventContainer, turnId, name, josephDeck, soundManager){
 
-        //this.playerName     = playerName;       // Nombre del player
-        //this.playerImage    = playerImage;      // Imgaen del player
         this.handDeck           = handDeck;                 // Mano del player
         this.enemyHandDeck      = enemyHandDeck
         this.minionDeck         = minionDeck;               // Mazo de minions
@@ -64,11 +61,8 @@ export default class Turn {
     createPhases(mouse, grids, decks, turnCounter){
             
             const handDeck                  = turnCounter === 0 ? decks[DecksId.PLAYER_1_HAND_DECK]             : decks[DecksId.PLAYER_2_HAND_DECK]
-            const enemyHandDeck             = turnCounter === 0 ? decks[DecksId.PLAYER_2_HAND_DECK]             : decks[DecksId.PLAYER_1_HAND_DECK]
             const activeMinionDeck          = turnCounter === 0 ? decks[DecksId.PLAYER_1_ACTIVE_MINION_DECK]    : decks[DecksId.PLAYER_2_ACTIVE_MINION_DECK]
             const enemyActiveMinionDeck     = turnCounter === 0 ? decks[DecksId.PLAYER_2_ACTIVE_MINION_DECK]    : decks[DecksId.PLAYER_1_ACTIVE_MINION_DECK]
-            const minionDeck                = turnCounter === 0 ? decks[DecksId.PLAYER_1_MINION_DECK]           : decks[DecksId.PLAYER_2_MINION_DECK]
-            const enemyMinionDeck           = turnCounter === 0 ? decks[DecksId.PLAYER_2_MINION_DECK]           : decks[DecksId.PLAYER_1_MINION_DECK]
             const eventDeck                 = decks[DecksId.EVENT_DECK]
             const graveYardDeck             = decks[DecksId.GRAVEYARD_DECK]
             const josephDeck                = decks[DecksId.JOSEPH_DECK]
@@ -78,7 +72,6 @@ export default class Turn {
             const enemyActiveEventDeck      = turnCounter === 0 ? decks[DecksId.PLAYER_2_PREPARING_EVENT_DECK]  : decks[DecksId.PLAYER_1_PREPARING_EVENT_DECK]
             const activeEventGrid           = turnCounter === 0 ? grids[GridId.PLAYER_1_EVENT_GRID]             : grids[GridId.PLAYER_2_EVENT_GRID]
             const handGrid                  = turnCounter === 0 ? grids[GridId.PLAYER_1_HAND_GRID]              : grids[GridId.PLAYER_2_HAND_GRID]
-            const enemyHandGrid             = turnCounter === 0 ? grids[GridId.PLAYER_2_HAND_GRID]              : grids[GridId.PLAYER_1_HAND_GRID]
         
             const buttons                   = this.buttonContainer;
             const eventContainer            = this.eventContainer;
@@ -332,7 +325,6 @@ export default class Turn {
                 break;
             
             case PhaseStates.DEFAULT:
-                // console.log("entro en default");
                 this.phaseState = this.phasesArray[PhaseStates.DEFAULT].execute(messagesContainer);
                 const isChangePhase = this.phasesArray[PhaseStates.DEFAULT].isPhaseCancelled(this.buttonContainer, messagesContainer);
 
@@ -417,14 +409,6 @@ export default class Turn {
                 card.state = CardId.BLOCKED
                 
             }
-    }
-
-    reduceEventCardsCooldown(){
-        for (let i = 0; i < this.preparingEventDeck.cards.length; i++) {
-            const card = this.preparingEventDeck.cards[i];
-            if (card.cooldown > 0) 
-                card.cooldown--
-        }
     }
     
     render(ctx,language, currentTurn, xPos, yPos, mouse, team){

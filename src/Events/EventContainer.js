@@ -1,5 +1,4 @@
-import Messages from "../Messages.js"
-import { IconsPos, MainCharacterId, MessageState, MessageType, TypeId } from "../constants.js"
+import { MainCharacterId, TypeId } from "../constants.js"
 import EventFactory from "./EventFactory.js"
 import { ModifyAttributeEvent } from "./temp_events/ModifyAttributesEvent.js"
 import { ModifyAttributeToAllMinions } from "./temp_events/ModifyAttributeToAllMinions.js"

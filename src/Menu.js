@@ -1,4 +1,4 @@
-import { ButtonState, ButttonsId, GameState, ReturnToMenuText, ScreenSize, renderState } from "./constants.js";
+import { ButtonState, ButttonsId, GameState, ReturnToMenuText, renderState } from "./constants.js";
 
 // El pergamino de menu_panel sobresale de la ventana para dejar sitio al marco y la sombra
 const PANEL_OFFSET_X = 59;

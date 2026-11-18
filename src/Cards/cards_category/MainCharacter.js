@@ -1,6 +1,5 @@
-import { BorderId, CardId, CardImageId, ChatMessages, IconsPos, VFXId, MessageState, MessageType, TurnStates } from "../../constants.js";
+import { BorderId, CardId, IconsPos, VFXId, MessageState, MessageType, TurnStates } from "../../constants.js";
 import Card from "../Card.js";
-import Messages from "../../Messages.js";
 export default class MainCharacter extends Card{
     constructor(id, texts, image, rarity, category, type, xPos, yPos, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, imageVFX, effect, imageHeroTeam, chatBubble, messages, durability=0, cooldown=0, toolTip){
             super(id, texts, image, rarity, category, type, xPos, yPos, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, imageVFX, toolTip);
@@ -59,7 +58,6 @@ export default class MainCharacter extends Card{
     
                     case CardId.SELECTED:
                         this.state = !mouse.rightClick && mouse.previousStateRight && isCollidingWithMouse ? CardId.SCALED : this.state
-                        // console.log("selected");
                         break;
                 }
             } else if (this.state === CardId.SCALED) {
@@ -91,7 +89,6 @@ export default class MainCharacter extends Card{
                     case CardId.SELECTED:
                         this.state = 
                             !mouse.leftClick      && mouse.previousStateLeft  && isCollidingWithMouse    ? CardId.NOT_SELECTED        :  this.state
-                        // console.log("selected");
                         break;
 
                     case CardId.SCALED:

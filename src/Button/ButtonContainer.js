@@ -122,7 +122,6 @@ export default class ButtonContainer{
     }
 
     resetStatesButtons(){
-        // console.log("entro aqui");
 
         for(let i = 0; i < this.container.length; i++){
             

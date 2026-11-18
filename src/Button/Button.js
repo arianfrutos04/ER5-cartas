@@ -1,5 +1,4 @@
-import { ButtonImageId, ButtonState, ButttonsId, LanguageId, PhaseStates, TurnStates, renderState } from "../constants.js";
-import ButtonContainer from "./ButtonContainer.js";
+import { ButtonImageId, ButtonState, ButttonsId, TurnStates, renderState } from "../constants.js";
 
 // Las placas miden 135 x 93 y sus imagenes tienen 16 px de margen por cada lado para el brillo
 const PLAQUE_WIDTH      = 135;

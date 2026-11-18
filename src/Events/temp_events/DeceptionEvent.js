@@ -1,4 +1,4 @@
-import { CardId, DecksId } from "../../constants.js";
+import { CardId } from "../../constants.js";
 import Event from "../Event.js";
 
 export default class DeceptionEvent extends Event{

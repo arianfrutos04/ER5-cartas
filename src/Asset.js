@@ -1,4 +1,3 @@
-import { ImageTypes } from "./constants.js";
 import { Images } from "./imageNames.js";
 
 export default class Asset {
@@ -154,7 +153,6 @@ export default class Asset {
             }
 
             this.isLoaded = true;
-            console.log("Assets loaded");
         }
     }
 

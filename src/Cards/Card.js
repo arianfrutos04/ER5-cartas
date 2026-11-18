@@ -1,6 +1,5 @@
 
-import Mouse from "../Mouse.js";
-import { BoardCardSizes, CardActions, CardId, DecksId, TypeId } from "../constants.js";
+import { BoardCardSizes, CardActions, CardId, DecksId } from "../constants.js";
 
 // Las cartas de la mano se giran al taparse o destaparse, una un poco despues que la anterior
 const FLIP_DURATION = 0.35;
@@ -16,8 +15,6 @@ export default class Card{
     constructor(id, texts, image, rarity, category, type = "Melee", xPos, yPos, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse,imageVFX, toolTip){
 
         this.id             = id;
-        // this.name           = name;
-        // this.description    = description;
         this.texts          = texts;
         this.image          = image;
         this.imageRarity    = imageRarity
@@ -39,7 +36,6 @@ export default class Card{
         this.action         = CardActions.DEFAULT;
         this.previousAction = CardActions.DEFAULT;
         this.deck
-        // this.objective      = objective;
     }
     startSpawn(xFrom, yFrom, delay){
 

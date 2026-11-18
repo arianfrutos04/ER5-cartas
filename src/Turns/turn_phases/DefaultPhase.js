@@ -1,4 +1,4 @@
-import { BuffId, CardActions, CurseId, PhaseStates, messageDefaultPhase } from "../../constants.js";
+import { BuffId, CurseId, PhaseStates, messageDefaultPhase } from "../../constants.js";
 import Phase from "./Phase.js";
 
 export default class messagesContainerDefaultPhase extends Phase {

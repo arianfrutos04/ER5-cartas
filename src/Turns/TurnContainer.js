@@ -1,5 +1,5 @@
 import Turn from "./Turn.js";
-import { CardId, CardImageId, DecksId, IconsPos, TurnId } from "../constants.js";
+import { CardId, DecksId, IconsPos, TurnId } from "../constants.js";
 import { requestMinionEffectTooltip } from "../Cards/minionEffects.js";
 
 export default class TurnContainer {
@@ -50,7 +50,6 @@ export default class TurnContainer {
         const player1ActiveMinionDeck   = this.deckContainer.decks[DecksId.PLAYER_1_ACTIVE_MINION_DECK];
         const player2ActiveMinionDeck   = this.deckContainer.decks[DecksId.PLAYER_2_ACTIVE_MINION_DECK];
         const buttonContainer           = this.buttonContainer;
-        const player1ActiveEvents       = this.eventContainer.events[TurnId.PLAYER_1];
         const player1Name               = localStorage.getItem("username");
         const player2Name               = document.getElementById("player_list").value;
 

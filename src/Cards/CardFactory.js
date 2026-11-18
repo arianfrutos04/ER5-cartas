@@ -7,7 +7,7 @@ import Minion from "./cards_category/Minion.js";
 import Spell from "./cards_category/Spell.js";
 import Weapon from "./cards_category/Weapon.js";
 import TextContainer from "../TextContainer.js";
-import { BorderId, CardId, CardImageId, ChatMessages, IconsId, ImageTypes, RarityId, StatsId, TypeId } from "../constants.js";
+import { BorderId, CardId, CardImageId, ChatMessages, IconsId, ImageTypes, StatsId, TypeId } from "../constants.js";
 import Tooltip from "../Tooltip.js";
 import Timer from "../Timer.js";
 
@@ -27,8 +27,6 @@ export default class CardFactory {
 
         for (let i = 0; i < this.cardData.length; i++) {
             const id = this.cardData[i].card_id;
-            // const name = [this.cardData[i].name, this.cardData[i].izena];
-            // const description = [this.cardData[i].description, this.cardData[i].deskripzioa];
             const texts  = TextContainer.createCardText(this.cardData[i]);
 
             const rarity = this.setRarity(this.cardData[i].rarity)
@@ -53,7 +51,6 @@ export default class CardFactory {
             }
             const weaponRarityImage = [normalSize, smallSize]
 
-            // console.log(weaponRarityImage);
             const armorRarityImage = [normalSize, smallSize]
             let imageCategory 
             let imageAttributes
@@ -63,7 +60,6 @@ export default class CardFactory {
             const quantity = this.cardData[i].quantity
             const xPos = 2200;
             const yPos = 1200;
-            const objective = "objective";
             const attributes = this.cardData[i].attributes;
             const effects = this.cardData[i].common_effect;
             switch (category) {
@@ -266,37 +262,6 @@ export default class CardFactory {
         
         return weapon;
     }
-
-
-    createCurse(id, texts, image, rarity, category, type, xPos, yPos, attributes, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, vfx) {
-
-        attributes = this.setAttributeValues(attributes)
-        console.log(attributes);
-        const curse = Curse.create(id, texts, image, rarity, category, type, xPos, yPos, attributes, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, vfx);
-        
-        return curse;
-    }
-
-
-    createBuff(id, texts, image, rarity, category, type, xPos, yPos, attributes, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, vfx) {
-
-        attributes = this.setAttributeValues(attributes)
-
-        const buff = Buff.create(id, texts, image, rarity, category, type, xPos, yPos, attributes, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, vfx);
-        
-        return buff;
-    }
-
-    
-    createSpell(id, texts, image, rarity, category, type, xPos, yPos, attributes, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, vfx, toolTip) {
-
-        attributes = this.setAttributeValues(attributes)
-        
-        const spell = Spell.create(id, texts, image, rarity, category, type, xPos, yPos, attributes, imageRarity, imageAttributes, imageBorders, imageCategory, imageReverse, vfx, toolTip);
-        
-        return spell;
-    }
-
 
     setAttributeValues(attributesArray) {
         let attributesResult = []
