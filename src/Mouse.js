@@ -1,4 +1,3 @@
-import { CardId, SlotsState } from "./constants.js";
 import { BorderId } from "./constants.js";
 
 // El cursor del juego se pinta en el lienzo en vez de ser un cursor de imagen del navegador: Chrome cambia los cursores de
@@ -117,8 +116,6 @@ export default class Mouse {
 
     canvasMousemoveHandler(event){
 
-        //PREGUNTAR A OSCAR/ MIGUEL SOBRE EL CANVAS DE ESTA FUNCION
-        // const canvas = document.getElementById('gameScreen');
         // Find the mouse's X and Y positions on the canvas
         this.x = Math.floor((event.pageX - this.canvas.offsetLeft) * (this.canvas.width / this.canvas.clientWidth));
         this.y = Math.floor((event.pageY - this.canvas.offsetTop) * (this.canvas.height / this.canvas.clientHeight));

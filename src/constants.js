@@ -2,15 +2,9 @@
 export const FPS =  60;
 
 export const GameState = {
-    INVALID:       -1,
-    LOAD_LANPAGE:   0,
-    LANDPAGE:       1,
     LOAD_GAME:      2,
     PLAYING:        3,
-    LOAD_GAMEOVER:  4,
     GAMEOVER:       5,
-    LOAD_CONTROLS:  6,
-    CONTROLS:       7,
     INVALID:        8,
     SEND_DATA:      9,
     QUICK_HELP:     10,
@@ -50,24 +44,11 @@ export const AttackState = {
 
 }
 
-export const MovePhaseStates = {
-    NONE:       0,
-    MOVE:       1,
-    ATTACK:     2,
-    SELECT_ATTACKER:    3,
-    SELECT_OBJECTIVE:   4,
-
-}
-
 export const CardActions = {
     COOLDOWN:       0,
     READY:          1,
     ON_USE:         2,
     WORN_OUT:       3,
-    APPLY_EVENT:    4,
-    SET_TURN:       5,
-    RESET_ACTION:   6,
-    REMOVE_EVENT:   7,
     STUNNED:        8,
     DEFAULT:        9,
 }
@@ -81,7 +62,6 @@ export const CardId = {
     HOVER:          5,
     SCALED:         6,
     NOT_ACTIVE:     7,
-    ALIVE:          8,
     DEAD:           9,
     ATTACK:         11,
     BLOCKED:        12,
@@ -187,12 +167,6 @@ export const IconsId = {
     COOLDOWN:   5,
     WEAPON:         6,
     ARMOR:          7,
-    MINI_LIFE:      8,
-    MINI_DEFENSE:   9,
-    MINI_DAMAGE:   10,
-    MINI_SPEED:    11,
-    MINI_WEAPON:   12,
-    MINI_ARMOR:    13,
 }
 export const TypeId = {
     MINION: 0,
@@ -371,7 +345,6 @@ export const BaseURLValue = 0
 
 export const TooltipText = {
     NAME:   ["Name: ", "Izena: "],
-    TYPE:   ["Type:", "Mota:"],
     RANGE:  ["Range:", "Irismena:"],
     TURNS_LEFT: ["Turns left: ", "Geratzen diren txandak: "],
     ATTACK:     ["Attack", "Erasoa"],

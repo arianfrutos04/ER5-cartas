@@ -1,4 +1,4 @@
-import { BuffId, CardImageId, DecksId, TypeId } from "../constants.js"
+import { CardImageId, DecksId, TypeId } from "../constants.js"
 import Deck from "./Deck.js"
 
 export default class DeckContainer {

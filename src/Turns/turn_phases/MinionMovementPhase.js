@@ -1,7 +1,6 @@
 import Phase from "./Phase.js";
 import { CardId, SlotsState, PhaseStates, messageMovimentPhase1, messageMovimentPhase2, Sound, BoardCardSizes } from "../../constants.js";
 import globals from "../../globals.js";
-import ParticlesContainer from "../../ParticlesContainer.js";
 
 export default class MinionMovementPhase extends Phase {
 

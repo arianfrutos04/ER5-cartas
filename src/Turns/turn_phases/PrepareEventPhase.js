@@ -47,8 +47,6 @@ export default class PrepareEventPhase extends Phase{
                 this.handDeck.cards.splice(position, 1)
                 this.activeEventDeck.cards.push(card)
                 card.setDeck(this.activeEventDeck)
-                const gridY = Math.floor(deckLength/3)
-                const gridX = Math.floor(deckLength%3)
                 const slot = this.activeEventGrid.slots[isAnySlotSelected[1]][isAnySlotSelected[2]];
                 card.xPos =  slot.xPos
                 card.yPos =  slot.yPos

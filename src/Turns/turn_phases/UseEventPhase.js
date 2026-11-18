@@ -2,7 +2,6 @@ import { CardId, TypeId, PhaseStates, messageUseEventPhase1, messageUseEventPhas
 import Phase from "./Phase.js";
 import Messages from "../../Messages.js";
 import { BoardCardSizes, MessageType, MessageState, TypeColors } from "../../constants.js";
-import Card from "../../Cards/Card.js";
 
 export default class UseEventPhase extends Phase{
 

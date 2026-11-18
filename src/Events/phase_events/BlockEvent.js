@@ -22,26 +22,22 @@ export default class BlockEvent extends Event{
         const state = this.state;
         const enemyWeapon = this.defenderMinion.weapon;
         const initialDmg = this.damage
-        let damage = 0
         let damageRender
         switch(state){
 
             case BlockStates.COMPLETE_BLOCK:
-                // console.log("completo");
                 this.damage = 0;
                 this.defenderMinion.health -= this.damage;
                 
                 break;
 
             case BlockStates.PARCIAL_BLOCK:
-                // console.log("parcial");
                 this.damage = Math.floor(Math.random() * (this.damage / 2));
                 this.defenderMinion.health -= this.damage;
          
                 break;
 
             case BlockStates.FAILED_BLOCK:
-                // console.log("fallo");
                 this.defenderMinion.health -= this.damage;
           
                 break; 

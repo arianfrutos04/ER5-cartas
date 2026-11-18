@@ -1,5 +1,4 @@
 import { GameState, Sound } from "./constants.js"
-import globals from "./globals.js"
 
 export default class SoundManager{
 
@@ -57,7 +56,6 @@ export default class SoundManager{
             }
 
             this.isLoaded = true;
-            console.log("Sounds loaded");
         }
     }
     updateMusic() {

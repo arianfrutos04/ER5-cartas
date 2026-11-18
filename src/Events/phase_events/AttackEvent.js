@@ -192,7 +192,6 @@ export class AttackEvent extends Event{
             // Ataque con los atributos del minion
             damage = this.attack();
             sound = Sound.ATTACK_PUNCH
-            console.log(sound);
             if(critic){
                 damage = Math.floor(damage * this.critic);
                 size = 100

@@ -1,5 +1,4 @@
-import Messages from "../../Messages.js";
-import { BorderId, CardActions, CardId, DecksId, DurabilityColors, IconsPos, MessageState, MessageType, ScreenSize, TurnStates, TypeNames, VFXId } from "../../constants.js";
+import { BorderId, CardActions, CardId, DecksId, DurabilityColors, IconsPos, TurnStates, VFXId } from "../../constants.js";
 import Card from "../Card.js";
 import { drawEventSlotImage, eventFade, eventReadyGlow, eventSelectGlow } from "../eventSlotStyle.js";
 import { NumberMode, drawCardNumber } from "../cardNumbers.js";
@@ -36,7 +35,6 @@ export default class Spell extends Card{
 
                 case CardId.SELECTED:
                     this.state = !mouse.rightClick && mouse.previousStateRight && isCollidingWithMouse ? CardId.SCALED : this.state
-                    // console.log("selected");
                     break;
             }
         } else if (this.state === CardId.SCALED) {
@@ -67,7 +65,6 @@ export default class Spell extends Card{
                     case CardId.SELECTED:
                         this.state = 
                             !mouse.leftClick      && mouse.previousStateLeft  && isCollidingWithMouse    ? CardId.NOT_SELECTED        :  this.state
-                        // console.log("selected");
                         break;
 
                     case CardId.SCALED:
@@ -227,10 +224,6 @@ export default class Spell extends Card{
                 ctx.drawImage(
                     this.imageBorders[size],
                     xPos, yPos)
-                    if (this.state === CardId.SCALED) {
-                        console.log(size);
-                        
-                    }
                 //RARITY ICON
                 ctx.drawImage(
                     this.imageRarity[size],
@@ -239,11 +232,6 @@ export default class Spell extends Card{
             }
                 
                     if (size === BorderId.NORMAL_SIZE) {
-                        // ctx.font = "25px LongaIberica-DEMO";
-                        // ctx.fillText(this.name[language], IconsPos.NAME_X + xPos, IconsPos.NAME_Y + yPos);
-                        // ctx.font = "15px LongaIberica-DEMO";
-                        // ctx.fillText(this.description[language], IconsPos.DESCRIPTION_X + xPos, IconsPos.DESCRIPTION_Y + yPos);
-                        // ctx.font = "25px LongaIberica-DEMO";
                         
                         this.texts.render(ctx, xPos, yPos, language);
 
@@ -355,22 +343,6 @@ export default class Spell extends Card{
                 break;
         }
     }
-    // renderToolTip(xPos, yPos, language, ctx){
-    //     ctx.fillStyle = '#d59d00'
-    //     ctx.fillRect(xPos, yPos, 178, 63 ) 
-
-    //     ctx.fillStyle = '#362315'
-    //     ctx.fillRect(xPos + 3, yPos + 3, 172, 57 ) 
-    //     ctx.fillStyle = 'white'
-
-    //     ctx.font ="15px LongaIberica-DEMO"
-    //     ctx.fillText('Name: ', xPos+35, yPos+20)
-    //     this.texts.texts[1].render(ctx, xPos-5, yPos-217, language) 
-
-    //     ctx.fillText('Type:', xPos+36, yPos+40)
-    //     ctx.fillText(TypeNames[this.category], xPos+115, yPos+40)
-        
-    // }
     checkTooltip(){
         if(this.state === CardId.HOVER){
             

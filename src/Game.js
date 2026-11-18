@@ -1,13 +1,10 @@
-import Card from "./Cards/Card.js";
-import { BoardId, BorderId, CardId, CardImageId, DecksId, ButtonImageId, GameState, GridId, IconsId, IconsPos, ImageTypes, LanguageId, RarityId, TypeId, TurnStates, SlotsState, TurnId, ButtonState, TimerId, PhaseStates, BaseURL, BaseURLValue, MessageState, MessageType, ButttonsId, Sound, renderState } from "./constants.js";
+import { BoardId, BorderId, CardId, CardImageId, DecksId, ButtonImageId, GameState, GridId, IconsPos, ImageTypes, LanguageId, TurnStates, TurnId, ButtonState, TimerId, PhaseStates, MessageState, MessageType, ButttonsId, Sound, renderState } from "./constants.js";
 import Board from "./Board.js";
 import Asset from "./Asset.js";
 import globals from "./globals.js";
-import CardFactory from "./Cards/CardFactory.js";
 import DeckContainer from "./Cards/DeckContainer.js";
 import TurnContainer from "./Turns/TurnContainer.js";
 import Mouse from "./Mouse.js";
-import Button from "./Button/Button.js";
 import ButtonContainer from "./Button/ButtonContainer.js";
 import MessagesContainer from "./MessagesContainer.js";
 import EventContainer from "./Events/EventContainer.js";
@@ -86,8 +83,6 @@ export default class Game {
 
         const firstTurn = Math.floor(Math.random()*2);
         turns.CreateTurns(mouse, eventContainer, soundManager);
-
-        console.log(turns.turnContainer);
 
         const timerContainer = new TimerContainer();
         timerContainer.create();
@@ -385,8 +380,6 @@ export default class Game {
         this.assignCardsToGrids(enemyTurn.handDeck, this.gridsArray.grids[GridId.PLAYER_2_HAND_GRID])
         this.assignCardsToGrids(turn.preparingEventDeck, this.gridsArray.grids[GridId.PLAYER_1_EVENT_GRID])
         this.assignCardsToGrids(enemyTurn.preparingEventDeck, this.gridsArray.grids[GridId.PLAYER_2_EVENT_GRID])
-
-        //this.updateTurns(); ---> test de cambio de turnos
     }
 
     changeLanguage(){
@@ -464,22 +457,6 @@ export default class Game {
                 eventDeck.cards.pop();
             }
 
-        }
-    }
-
-    assignMinionsToActiveMinionsDeck(minionDeck, activeMinionDeck) {
-
-        for (let i = activeMinionDeck.length; i < 3; i++) {
-
-            for (let j = 0; j < minionDeck.cards.length; j++){
-
-                if (minionDeck.cards[j].name[LanguageId.ENG] === "Villager"){
-
-                    activeMinionDeck.push(minionDeck.cards[j]);
-                    minionDeck.cards.splice(minionDeck.cards[j], 1);
-                    break;
-                }
-            }
         }
     }
 
@@ -753,29 +730,6 @@ export default class Game {
         return value % 10 === 1 || value % 10 === 5;
     }
 
-    // funcion para realizar el movimiento
-    moveCard(card, slot){
-
-        let speedX = 800;
-        let speedY = 800;
-        
-        const xDistance = card.xPos - slot.xPos;
-        const yDistance = card.yPos - slot.yPos;
-        const distance = Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
-        const vX = speedX * (xDistance / distance);
-        const vY = speedY * (yDistance / distance);
-
-        if (distance < 10){
-            
-            card.xPos = slot.xPos;
-            card.yPos = slot.yPos;
-            slot.isEmpty = false;
-        } else {
-            card.xPos -= vX * globals.deltaTime;
-            card.yPos -= vY * globals.deltaTime;
-        }
-    }
-
     setTurnDecksPositions(){
 
         const turn = this.turnContainer.turnContainer[this.currentTurn];
@@ -872,30 +826,6 @@ export default class Game {
         }
     }
 
-    // mover a turncontainer
-    updateTurns(){
-        this.turnChange();
-    }
-
-    turnChange(){
-        console.log(this.turnArray.turnContainer[0].active);
-
-        setTimeout(() => {
-            this.turnArray.turnContainer[0].active = true;
-        }, 3000)
-
-        if(this.turnArray.turnContainer[0].active){
-            console.log("turno player 1");
-            // turno player 1
-
-        }else if(this.turnArray.turnContainer[1].active){
-
-            // Turno player 2
-            console.log("turno player 2");
-
-        }
-    }
-
     // Enviar datos objeto game
     sendStatsData(){
         const player1 = this.turnContainer.turnContainer[0];
@@ -962,8 +892,6 @@ export default class Game {
             loserStats:  loser  === p1MongoId ? game.players[0] : game.players[1]
         }
 
-
-        console.log(JSON.stringify(game));
 
     fetch(`http://localhost:4000/newGame`, {
             method: "POST",

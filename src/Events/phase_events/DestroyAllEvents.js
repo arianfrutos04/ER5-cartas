@@ -1,4 +1,3 @@
-import { CardActions, CardId, CardImageId } from "../../constants.js";
 import Event from "../Event.js";
 
 export class DestroyAllEvents extends Event{

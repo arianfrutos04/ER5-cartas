@@ -121,9 +121,4 @@ export default class MessagesContainer{
         
         return message
     }
-
-    deleteMessages(){
-
-        
-    }
 }

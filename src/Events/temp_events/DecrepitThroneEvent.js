@@ -38,10 +38,8 @@ export default class DecrepitThroneEvent extends Event{
 
     static remove(minion, activeMinionDeck, enemyActiveMinionDeck){
         const index = activeMinionDeck.cards.indexOf(minion);
-        console.log(index);
         if(index !== -1){
             activeMinionDeck.cards.splice(index, 1);
-            console.log(activeMinionDeck.cards);
 
             minion.attack -= 3;
             minion.speed  -= 1;

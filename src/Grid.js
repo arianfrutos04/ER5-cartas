@@ -1,4 +1,4 @@
-import { CardId, SlotsState } from "./constants.js";
+import { SlotsState } from "./constants.js";
 import Slot from "./Slot.js";
 
 export default class Grid{

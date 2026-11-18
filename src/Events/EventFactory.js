@@ -1,4 +1,4 @@
-import { BuffId, CardActions, CurseId, DecksId, EventsId, IconsPos, MainCharacterId, MessageState, MessageType, StatsId, TypeId } from "../constants.js";
+import { BuffId, CardActions, CurseId, EventsId, MainCharacterId, TypeId } from "../constants.js";
 import { CooldownEvent } from "./temp_events/CooldownEvent.js";
 import { DurabilityEvent } from "./temp_events/DurabilityEvent.js";
 import { ModifyAttributeEvent } from "./temp_events/ModifyAttributesEvent.js";
@@ -14,7 +14,6 @@ import AngeloDiMortisEvent from "./temp_events/AngeloDiMortisEvent.js";
 import IncreaseActionEvent from "./temp_events/IncreaseActionEvent.js";
 import MolotovCokctailEvent from "./temp_events/MolotovCocktailEvent.js";
 import DeceptionEvent from "./temp_events/DeceptionEvent.js";
-import Messages from "../Messages.js";
 
 export default class EventFactory {
 

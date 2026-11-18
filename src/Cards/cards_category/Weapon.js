@@ -1,5 +1,4 @@
-import Messages from "../../Messages.js";
-import { BorderId, CardActions, CardId, IconsPos, IconsId, VFXId, StatsId, DecksId, DurabilityColors, TypeNames, MessageType, MessageState, TurnStates, ScreenSize } from "../../constants.js";
+import { BorderId, CardActions, CardId, IconsPos, VFXId, StatsId, DecksId, DurabilityColors, TurnStates } from "../../constants.js";
 import Card from "../Card.js";
 import { drawEventSlotImage, eventFade, eventReadyGlow, eventSelectGlow } from "../eventSlotStyle.js";
 import { NumberMode, drawCardNumber } from "../cardNumbers.js";
@@ -43,7 +42,6 @@ export default class Weapon extends Card{
 
                 case CardId.SELECTED:
                     this.state = !mouse.rightClick && mouse.previousStateRight && isCollidingWithMouse ? CardId.SCALED : this.state
-                    // console.log("selected");
                     break;
             }
         } else if (this.state === CardId.SCALED) {
@@ -73,7 +71,6 @@ export default class Weapon extends Card{
                     case CardId.SELECTED:
                         this.state = 
                             !mouse.leftClick      && mouse.previousStateLeft  && isCollidingWithMouse    ? CardId.NOT_SELECTED        :  this.state
-                        // console.log("selected");
                         break;
 
                     case CardId.SCALED:
@@ -108,7 +105,6 @@ export default class Weapon extends Card{
     }
     checkDurability(){
         if (this.durability <= 0) {
-            console.log("entra");
             this.action = CardActions.WORN_OUT
         }
     }
@@ -166,12 +162,8 @@ export default class Weapon extends Card{
             
         
         if (!this.isShowingBack()) {
-            // console.log(this.imageVFX);
             ctx.fillStyle = "black"
                 ctx.font = "25px LongaIberica-DEMO";
-            if (this.state != CardId.NOT_ACTIVE) {
-                // console.log(this.state, CardId.HOVER, CardId.SELECTED);
-            }
                 //CARD IMAGE
                 let size = this.size
                 if (this.state === CardId.SCALED || equipped) {
@@ -234,10 +226,6 @@ export default class Weapon extends Card{
                     ctx.drawImage(
                         this.imageBorders[size],
                         xPos, yPos)
-                        if (this.state === CardId.SCALED) {
-                            console.log(size);
-                            
-                        }
                     //RARITY ICON
                     ctx.drawImage(
                         this.imageRarity[size],
@@ -245,11 +233,6 @@ export default class Weapon extends Card{
                     
                 }
                 if (size === BorderId.NORMAL_SIZE) {
-                    // ctx.font = "25px LongaIberica-DEMO";
-                    // ctx.fillText(this.name[language], IconsPos.NAME_X + xPos, IconsPos.NAME_Y + yPos);
-                    // ctx.font = "15px LongaIberica-DEMO";
-                    // ctx.fillText(this.description[language], IconsPos.DESCRIPTION_X + xPos, IconsPos.DESCRIPTION_Y + yPos);
-                    // ctx.font = "25px LongaIberica-DEMO";
                     
                     this.texts.render(ctx, xPos, yPos, language);
 
@@ -358,25 +341,6 @@ export default class Weapon extends Card{
                 break;
         }
     }
-    // renderToolTip(xPos, yPos, language, ctx){
-    //     ctx.fillStyle = '#d59d00'
-    //     ctx.fillRect(xPos, yPos, 178, 83 ) 
-
-    //     ctx.fillStyle = '#362315'
-    //     ctx.fillRect(xPos + 3, yPos + 3, 172, 77 ) 
-    //     ctx.fillStyle = 'white'
-
-    //     ctx.font ="15px LongaIberica-DEMO"
-    //     ctx.fillText('Name: ', xPos+35, yPos+20)
-    //     this.texts.texts[1].render(ctx, xPos-5, yPos-217, language) 
-
-    //     ctx.fillText('Type:', xPos+36, yPos+40)
-    //     ctx.fillText(TypeNames[this.category], xPos+115, yPos+40)
-
-    //     ctx.fillText('Range:', xPos+32, yPos+60)
-    //     ctx.fillText(this.range, xPos+118, yPos+62)
-        
-    // }
     checkTooltip(){
         if(this.state === CardId.HOVER){
             

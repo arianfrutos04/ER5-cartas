@@ -1,4 +1,4 @@
-import { CardId, ScreenSize } from "../../constants.js";
+import { CardId } from "../../constants.js";
 import Phase from "./Phase.js";
 import { PhaseStates, messageDiscardPhase } from "../../constants.js";
 

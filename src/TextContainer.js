@@ -1,6 +1,6 @@
 
 import Text from "./Text.js";
-import { LanguageId , IconsPos, messageDefaultPhase, messageDiscardPhase, messageEndTurn, messageMovimentPhase1, messageMovimentPhase2, messageAttackPhase1, messageAttackPhase2, messagePrepareEventPhase1, messagePrepareEventPhase2, messageUseEventPhase1, messageUseEventPhase2, messageUseEventPhase3 } from "./constants.js";
+import { IconsPos, messageDefaultPhase, messageDiscardPhase, messageEndTurn, messageMovimentPhase1, messageMovimentPhase2, messageAttackPhase1, messageAttackPhase2, messagePrepareEventPhase1, messagePrepareEventPhase2, messageUseEventPhase1, messageUseEventPhase2, messageUseEventPhase3 } from "./constants.js";
 
 export default class TextContainer{
 

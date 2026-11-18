@@ -1,5 +1,4 @@
 import { BoardId, DecksId, GridId, ImageTypes, RarityId, TurnId } from "./constants.js";
-import globals from "./globals.js";
 import Grid from "./Grid.js";
 
 export default class Board{
